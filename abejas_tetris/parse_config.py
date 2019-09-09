@@ -7,6 +7,7 @@ import configparser
 from abejas_tetris.funciones_online import set_pesos
 
 def parse_tipos(config):
+    """ Regresa un hash con todos los parámetros del archivo de parámetros. """
     size_colmena = int(config['size'])
     limite_it = int(config['limite'])
     if config['iteraciones'] == 'None':
@@ -61,6 +62,7 @@ def parse_tipos(config):
     return data
 
 def get_config(path):
+    """ Dado una ruta, regresa todas las variables de ese archivo. """
     config = configparser.ConfigParser()
     config.read(path)
     data = {}

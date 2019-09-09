@@ -32,3 +32,17 @@ Si se desea cambiar el uso del programa, se debe modificar el archivo que se enc
 ```shell
 (.env) user@host:~/path/to/repo$ python __main__.py
 ```
+
+## Cita
+
+Si deseas citar este repositorio usar la siguiente referencia:
+
+```tex
+@misc{abc-tetris,
+author = {José Ricardo Rodríguez Abreu},
+howpublished = {GitHub},
+title = {Codigo de la implementación de la heurística Colonia de Abejas Artificiales a una instancia del problema de la 3-partición: Tetris},
+URL = {https://github.com/ricardorodab/abc-tetris},
+year = {2019}
+}
+```

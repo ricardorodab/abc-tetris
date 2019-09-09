@@ -5,6 +5,7 @@ import re,sys
 import logging
 
 def set_logging(level):
+    """ Crea un loggin para leer en terminal. """
     logging.basicConfig()
     level = None
     if level == 'INFO':
@@ -19,6 +20,7 @@ def set_logging(level):
         
 
 def get_fichas():
+    """ Regresa las fichas en forma de lista de cadenas. """
     fichas_lista = []
     file = open("./etc/fichas.csv", "r")
     lineas = file.readlines()
@@ -27,9 +29,11 @@ def get_fichas():
     return fichas_lista
 
 def get_config_hash():
+    """ Regresa los parámetros principales. """
     return get_config("./etc/config.cfg")
 
 def get_juego(data):
+    """ Regresa una instancia de la inferfaz de heurística-juego. """
     online = data['online']
     size_colmena = data['size_colmena']
     limite_it = data['limite_it']
@@ -40,7 +44,17 @@ def get_juego(data):
     abc.set_lista_piezas(get_fichas())
     return abc
 
+def imprime_datos(solucion):
+    """ Imprime en pantalla algunos datos del tablero. """
+    nectar_local = funcion_nectar_online(solucion)
+    piezas_local = solucion.piezas_jugadas()
+    logging.info('Nectar final: ' + str(nectar_local))
+    logging.info('Piezas jugadas: ' + str(piezas_local))
+    logging.info('Filas eliminadas: ' + str(solucion.num_tetris()))
+    solucion.imprime_tablero()
+
 def busca_semilla(data):
+    """ Busca las mejores semillas a jugar. """
     itera_range = data['semilla_itera']
     semillero = data['semilla_ubicacion']
     logging.warning('Iniciando busqueda de mejor semilla')
@@ -79,12 +93,14 @@ def busca_semilla(data):
     return semilla
 
 def set_random_local(data):
+    """ Asigna una semilla al generador de números aleatorios. """
     semilla = data['semilla']
     if not data['random_var']:
         if semilla == -1:
             semilla = busca_semilla(data)
         set_random(semilla)
 
+# Punto de entrada del proyecto:
 if __name__ == "__main__":
     data = get_config_hash()
 
@@ -96,6 +112,6 @@ if __name__ == "__main__":
         abc.interactivo()
     elif data['online']:
         solucion = abc.juega_online(iteraciones=data['iteraciones'])
-        solucion.imprime_tablero()
+        imprime_datos(solucion)
         if data['gui']:  
             abc.pinta_solucion(solucion)

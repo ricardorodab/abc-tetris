@@ -24,7 +24,25 @@ def get_piezas():
     return lista_piezas
 
 class Abejas_Tetris():
-    def __init__(self, online=True, size_colmena=150, limite_it=50, delta=0.1, alto=20, ancho=10):
+    """ La interfaz de comunicación entre la heurística y el juego. """
+    def __init__(self, online=True, size_colmena=150, \
+        limite_it=50, delta=0.1, alto=20, ancho=10):
+        """
+        Parameters
+        ----------
+        online : bool
+            Es una bandera de modo del juego.
+        size_colmena : int
+            Es el tamaño que tendrá la colmena de abejas.
+        limite_it : int
+            Es el límite de iteraciones que una abeja hace sobre una fuente.
+        delta : float
+            Es qué tan lejos llegará la abeja observadora.
+        alto : int
+            Es el alto del tablero.
+        ancho : int
+            Es el ancho del tablero.
+        """
         self._x = ancho
         self._y = alto
         t = tetris.Tetris(self._x, self._y)
@@ -35,6 +53,13 @@ class Abejas_Tetris():
         self.lista_piezas = []
 
     def set_lista_piezas(self, piezas):
+        """
+        Asigna una lista de piezas a la lista global de piezas.
+        Parameters
+        ----------
+        piezas : list(str)
+            Es la lista de piezas en su representación de string.
+        """
         for i in piezas:
             if i == 'I':
                 self.lista_piezas.append(Tipo.I)
@@ -59,6 +84,9 @@ class Abejas_Tetris():
                 lista_piezas.append(Tipo.Sq)
 
     def init_colmena(self):
+        """
+        Inicializa los valores de las funciones de la colmena.
+        """
         if self.online:
             self.colmena.set_funcion_nectar(funcion_nectar_online)
             self.colmena.set_funcion_buscar_fuente(funcion_buscar_fuente_online)
@@ -68,6 +96,14 @@ class Abejas_Tetris():
             self.colmena.inizializa_abejas()
     
     def juega_online(self, iteraciones=None):
+        """
+        Juega Tetris con abejas de manera online.
+        
+        Parameters
+        ----------
+        iteraciones=None : int
+            Es el número de iteraciones que correrá la partida.
+        """
         self.init_colmena()
         self._tetris.desactiva_limpieza_automatica()
         if iteraciones == None:
@@ -83,6 +119,10 @@ class Abejas_Tetris():
         return self.colmena.get_mejor_solucion()
 
     def interactivo(self):
+        """
+        Hace una pequeña interfaz para ver el funcionamiento paso a paso del 
+        juego.
+        """
         tetris_tmp = self._tetris
         self._tetris = tetris.Tetris(self._x, self._y)
         self.set_gui()
@@ -92,7 +132,8 @@ class Abejas_Tetris():
                 tipo = self.lista_piezas[pieza]
                 pieza = pieza + 1
                 self._tetris.set_pieza(tipo=tipo)
-            moves = [Movimiento.CAE, Movimiento.DER, Movimiento.IZQ, Movimiento.GIR]
+            moves = [Movimiento.CAE, Movimiento.DER, \
+                Movimiento.IZQ, Movimiento.GIR]
             moves_posibles = []
             for i in moves:
                 if self._tetris.movimiento_valido(i):
@@ -119,6 +160,14 @@ class Abejas_Tetris():
         self._tetris = tetris_tmp
 
     def pinta_historia(self, historia=[]):
+        """
+        Pinta una lista de movimientos.
+
+        Parameters
+        ----------
+        historial : list(Movimiento)
+            Es el historial de movimientos hechos que pintar.
+        """
         tetris_tmp = self._tetris
         self._tetris = tetris.Tetris(self._x, self._y)
         self.set_gui()
@@ -128,7 +177,8 @@ class Abejas_Tetris():
                 tipo = self.lista_piezas[pieza]
                 pieza = pieza + 1
                 self._tetris.set_pieza(tipo=tipo)
-            moves = [Movimiento.CAE, Movimiento.DER, Movimiento.IZQ, Movimiento.GIR]
+            moves = [Movimiento.CAE, Movimiento.DER, \
+                Movimiento.IZQ, Movimiento.GIR]
             moves_posibles = []
             for i in moves:
                 if self._tetris.movimiento_valido(i):
@@ -147,6 +197,14 @@ class Abejas_Tetris():
         self._tetris = tetris_tmp
 
     def pinta_solucion(self, solucion):
+        """
+        Dada una solución de un juego de Tetris, crea una GUI y la muestra.
+
+        Parameters
+        ----------
+        solucion : Tetris
+            Es el juego de Tetris a dibujar.
+        """
         tetris_tmp = self._tetris
         moves = solucion.get_historial()
         self._tetris = tetris.Tetris(self._x, self._y)
@@ -171,29 +229,41 @@ class Abejas_Tetris():
         
 
     def random(self):
+        """
+        Juega de forma completamente aleatoria.
+        """
         while not self.pierde:
             tipo = self.__random_tipo()
             move = self.__random_move()
-            self.pierde = not self._tetris.siguiente_random(tipo=tipo, move=move)
+            self.pierde = not self._tetris.siguiente_random(tipo=tipo, \
+                move=move)
             self.dibuja()
             time.sleep(0.05)
 
     def quit_gui(self):
+        """
+        Sale de la interfaz gráfica.
+        """
         pygame.font.quit()
         pygame.display.quit()
 
     def set_gui(self):
+        """
+        Inizializa los valores que pygame debe tener al principio.
+        """
         self._gui = True
         # Tablero:
         self.resx = self._x*ANCHO_BLOQUE+2*TABLERO_ALTURA+TABLERO_MARGEN
         self.resy = self._y*ALTO_BLOQUE+2*TABLERO_ALTURA+TABLERO_MARGEN
         # Lineas:                                                           
         self.frontera_arriba = pygame.Rect(0,0,self.resx,TABLERO_ALTURA)
-        self.frontera_abajo = pygame.Rect(0,self.resy-TABLERO_ALTURA,self.resx,TABLERO_ALTURA)
+        self.frontera_abajo = \
+            pygame.Rect(0,self.resy-TABLERO_ALTURA,self.resx,TABLERO_ALTURA)
         self.frontera_izq = pygame.Rect(0,0,TABLERO_ALTURA,self.resy)
-        self.frontera_der = pygame.Rect(self.resx-TABLERO_ALTURA,0,TABLERO_ALTURA,self.resy)
+        self.frontera_der = \
+            pygame.Rect(self.resx-TABLERO_ALTURA,0,TABLERO_ALTURA,self.resy)
         self.inicio_x = math.ceil(self.resx/2.0)
-        self.inicio_y = TABLERO_MARGEN_SUPERIOR + TABLERO_ALTURA + TABLERO_MARGEN
+        self.inicio_y = TABLERO_MARGEN_SUPERIOR+TABLERO_ALTURA + TABLERO_MARGEN
         # False means no rotate and True allows the rotation.     
         self.colores = {
             Tipo.I : ROJO,     # I                                                                                                   
@@ -210,41 +280,54 @@ class Abejas_Tetris():
         pygame.display.set_caption("Tetris")
 
     def dibuja(self):
+        """
+        Dibuja todo lo que haya en el tablero del juego.
+        """
         self.pantalla.fill(NEGRO)
         self.__dibuja_tablero()
         self.__dibuja_fichas()   
         pygame.display.flip()
 
+    # Funciones auxiliares
+
+    # Dibuja las fichas.
     def __dibuja_fichas(self):
         for x in range(self._x):
             for y in range(self._y):
                 if self._tetris.get_casilla(x,y) != None:
                     tipo = self._tetris.get_casilla(x, y).get_tipo()
                     bloque = self._get_block(x, y)
-                    pygame.draw.rect(self.pantalla, self.colores.get(tipo), bloque)
-                    pygame.draw.rect(self.pantalla, NEGRO, bloque, MARGEN_BLOQUE)
+                    pygame.draw.rect(self.pantalla, \
+                        self.colores.get(tipo), bloque)
+                    pygame.draw.rect(self.pantalla, \
+                        NEGRO, bloque, MARGEN_BLOQUE)
     
+    # Dibuja todos los bloques de las fichas.
     def _get_block(self, x, y):
         bx = (x + 0.3)*ALTO_BLOQUE + TABLERO_MARGEN
         by = (y + 0.4)*ANCHO_BLOQUE + 0 
         return pygame.Rect(bx,by,ANCHO_BLOQUE,ALTO_BLOQUE)
-        
+
+    # Dibuja el tablero.  
     def __dibuja_tablero(self):
         pygame.draw.rect(self.pantalla, BLANCO, self.frontera_arriba)
         pygame.draw.rect(self.pantalla, BLANCO, self.frontera_abajo)
         pygame.draw.rect(self.pantalla, BLANCO, self.frontera_izq)
         pygame.draw.rect(self.pantalla, BLANCO, self.frontera_der)
 
+    # Función que tegresa los puntos de la casillas.
     def __get_puntos(self, casillas):
         puntos = []
         for i in casillas:
             puntos.append(i.get_punto())
         return puntos
 
+    # Regresa un Tipo de manera aleatoria.
     def __random_tipo(self):
         piezas = [Tipo.I, Tipo.LG, Tipo.LS, Tipo.T, Tipo.RS, Tipo.RG, Tipo.Sq]
         return piezas[get_randrange(len(piezas))]
 
+    # Regresa un Movimiento (menos FIJ) de forma aleatoria.
     def __random_move(self):
         moves = [Movimiento.CAE, Movimiento.DER, Movimiento.IZQ, Movimiento.GIR]
         moves_posibles = []

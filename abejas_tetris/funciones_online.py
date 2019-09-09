@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+__author__ = "José Ricardo Rodríguez Abreu"
+__email__ = "ricardo_rodab@ciencias.unam.mx"
 import abejas_tetris
 import math
 from abejas_tetris.my_random import get_random, get_randrange, get_randbits

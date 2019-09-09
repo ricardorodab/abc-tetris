@@ -7,6 +7,7 @@ from .punto import *
 from enum import Enum
 
 class Tipo(Enum):
+    """Este enum representa las posibles piezas del juego de Tetris"""
     I = 1
     RS = 2
     LG = 3
@@ -16,6 +17,7 @@ class Tipo(Enum):
     Sq = 7
 
 def instancia_i(pos):
+    """ Regresa una lista con las casillas de la pieza I """
     # La casilla media es 0Ó00
     p2 = Punto(pos.get_x() - 1, pos.get_y())
     p3 = Punto(pos.get_x() + 1, pos.get_y())
@@ -27,6 +29,7 @@ def instancia_i(pos):
     return [c1,c2,c3,c4]
 
 def instancia_rs(pos):
+    """ Regresa una lista con las casillas de la pieza RS """
     # La casilla media es:
     #     Ó0
     #    00
@@ -40,6 +43,7 @@ def instancia_rs(pos):
     return [c1,c2,c3,c4]
 
 def instancia_lg(pos):
+    """ Regresa una lista con las casillas de la pieza LG """
     # La casilla media es:
     #    0 
     #    Ó00
@@ -53,6 +57,7 @@ def instancia_lg(pos):
     return [c1,c2,c3,c4]
 
 def instancia_t(pos):
+    """ Regresa una lista con las casillas de la pieza T """
     # La casilla media es:
     #     0
     #    0Ó0
@@ -66,6 +71,7 @@ def instancia_t(pos):
     return [c1,c2,c3,c4]
 
 def instancia_rg(pos):
+    """ Regresa una lista con las casillas de la pieza RG """
     # La casilla media es:
     #      0
     #    00Ó
@@ -79,6 +85,7 @@ def instancia_rg(pos):
     return [c1,c2,c3,c4]
 
 def instancia_ls(pos):
+    """ Regresa una lista con las casillas de la pieza LS """
     # La casilla media es:
     #    0Ó 
     #     00
@@ -92,6 +99,7 @@ def instancia_ls(pos):
     return [c1,c2,c3,c4]
 
 def instancia_sq(pos):
+    """ Regresa una lista con las casillas de la pieza Sq """
     # La casilla media es:
     #    Ó0 
     #    00
@@ -105,6 +113,7 @@ def instancia_sq(pos):
     return [c1,c2,c3,c4]
 
 def get_casillas(tipo, posicion):
+    """ Esta función regresa lista de casillas dependiendo el tipo"""
     if tipo is Tipo.I:
         return instancia_i(posicion)
     elif tipo is Tipo.RS:
@@ -121,6 +130,7 @@ def get_casillas(tipo, posicion):
         return instancia_sq(posicion)
 
 def rota_i(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza I."""
     # La casilla media es 0Ó00
     p1 = casillas[0].get_punto()
     p2 = casillas[1].get_punto()
@@ -140,6 +150,7 @@ def rota_i(casillas):
     return [np1, np2, np3, np4]
 
 def rota_rs(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza RS."""
     # La casilla media es:
     #     Ó0
     #    00
@@ -162,6 +173,7 @@ def rota_rs(casillas):
     
     
 def rota_lg(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza LG."""
     # La casilla media es:
     #    0 
     #    Ó00
@@ -196,6 +208,7 @@ def rota_lg(casillas):
         return [np1, np2, np3, np4]
 
 def rota_t(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza T."""
     # La casilla media es:
     #     0
     #    0Ó0
@@ -231,6 +244,7 @@ def rota_t(casillas):
         return [np1, np2, np3, np4]
     
 def rota_rg(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza RG."""
     # La casilla media es:
     #      0
     #    00Ó
@@ -265,6 +279,7 @@ def rota_rg(casillas):
         return [np1, np2, np3, np4]
     
 def rota_ls(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza LS."""
     # La casilla media es:
     #    0Ó 
     #     00
@@ -286,6 +301,7 @@ def rota_ls(casillas):
     return [np1, np2, np3, np4]
 
 def rota_sq(casillas):
+    """ Regresa una lista con los puntos rotados de la pieza Sq."""
     # La casilla media es:
     #    Ó0 
     #    00
@@ -301,6 +317,7 @@ def rota_sq(casillas):
     return [np1, np2, np3, np4]
     
 def rota(tipo, casillas):
+    """ Regresa una lista con los puntos rotados."""
     if tipo is Tipo.I:
         return rota_i(casillas)
     elif tipo is Tipo.RS:
