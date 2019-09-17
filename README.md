@@ -33,6 +33,14 @@ Si se desea cambiar el uso del programa, se debe modificar el archivo que se enc
 (.env) user@host:~/path/to/repo$ python __main__.py
 ```
 
+## Ejemplos de uso
+
+Se pueden encontrar dos ejemplos de uso en YouTube.
+
+[Uso de función Raining Skyline](https://youtu.be/F-Nxjvu8fPA)
+
+[Solución aceptable con 71 lineas eliminadas usando la función de pesos](https://youtu.be/rjpVh7kaREY)
+
 ## Cita
 
 Si deseas citar este repositorio usar la siguiente referencia:
