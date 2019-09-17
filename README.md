@@ -5,9 +5,9 @@
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Escudo-UNAM-escalable.svg/200px-Escudo-UNAM-escalable.svg.png" width="283" height="283" />
 </p>
 
-Una implementación basado en el artículo escrito por Erik D. Demaine, Susan Hohenberger y
-David LibenNowell sobre la clasificación de tetris como un problema NP-completo.
-Se usa la heurística de Dervis Karaboga que habla sobre una colonia de abejas artificiales.
+Una implementación basado en el [artículo escrito por Erik D. Demaine, Susan Hohenberger y
+David LibenNowell](https://arxiv.org/pdf/cs/0210020.pdf) sobre la clasificación de tetris como un problema NP-completo.
+Se usa la [heurística de Dervis Karaboga](http://www.cs.uoi.gr/~lagaris/GRAD_GLOPT/projects/bee_colony.pdf) que habla sobre una colonia de abejas artificiales.
 
 ## Instalación
 
