@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from abejas_tetris.abejas_tetris import *
 from abejas_tetris.parse_config import *
 from abejas_tetris.my_random import get_random, get_randrange, get_randbits, set_random
@@ -167,5 +169,4 @@ if __name__ == "__main__":
         solucion = abc.juega_online(iteraciones=it, limpieza=limpia)
         imprime_datos(solucion)
         if data['gui']:  
-            exit(0)
             abc.pinta_solucion(solucion)

@@ -188,7 +188,6 @@ class Abejas_Tetris():
         tipo = self.lista_piezas[0]
         self._tetris.set_pieza(tipo=tipo)
         moves = historia
-        time.sleep(5)
         while len(moves) > 0:
             move = moves.pop(0)
             if move == Movimiento.FIJ:
@@ -263,6 +262,7 @@ class Abejas_Tetris():
         """
         pygame.font.quit()
         pygame.display.quit()
+        pygame.mixer.quit()
 
     def set_gui(self):
         """
@@ -293,6 +293,10 @@ class Abejas_Tetris():
         }
         pygame.init()
         pygame.font.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load("./etc/tetris-theme.mp3")
+        pygame.mixer.music.play()
+        time.sleep(1)
         self.pantalla = pygame.display.set_mode((self.resx,self.resy))
         pygame.display.set_caption("Tetris")
 
