@@ -144,7 +144,6 @@ def set_random_local(data):
 
 # Punto de entrada del proyecto:
 if __name__ == "__main__":
-    global mejor_historial
     data = get_config_hash()
 
     set_logging(data['logging_level'])
