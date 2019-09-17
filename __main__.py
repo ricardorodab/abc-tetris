@@ -1,8 +1,45 @@
 from abejas_tetris.abejas_tetris import *
 from abejas_tetris.parse_config import *
-from abejas_tetris.my_random import *
-import re,sys
+from abejas_tetris.my_random import get_random, get_randrange, get_randbits, set_random
+import re,sys, os
 import logging
+
+mejor_historial = None
+
+def copia_historial(historial, i):
+    salida = 'soluciones/solucion' + str(i) + '.txt'
+    global mejor_historial
+    """ Si se experimenta, se desea guardar el mejor. """
+    mejor_historial = []
+    for i in historial:
+        mejor_historial.append(i)
+    if os.path.exists(salida):
+        os.remove(salida)
+    f = open (salida,'w')
+    f.write(str(mejor_historial))
+    f.close()
+
+def lee_historia(ruta):
+    historia_move = []
+    file = open(ruta, "r")
+    lineas = file.readlines()
+    for linea in lineas:
+        moves_lista = linea.split(',')
+        for m in moves_lista:
+            tmp = m.replace('[', '').replace(']', '').replace(' ', '')
+            if tmp == '<Movimiento.DER:1>':
+                historia_move.append(Movimiento.DER)
+            elif tmp == '<Movimiento.IZQ:2>':
+                historia_move.append(Movimiento.IZQ)
+            elif tmp == '<Movimiento.CAE:3>':
+                historia_move.append(Movimiento.CAE)
+            elif tmp == '<Movimiento.GIR:4>':
+                historia_move.append(Movimiento.GIR)
+            elif tmp == '<Movimiento.FIJ:5>':
+                historia_move.append(Movimiento.FIJ)
+            else:
+                raise Exception("No se puede leer el movimiento.")
+    return historia_move
 
 def set_logging(level):
     """ Crea un loggin para leer en terminal. """
@@ -19,10 +56,10 @@ def set_logging(level):
     logging.getLogger().setLevel(level)
         
 
-def get_fichas():
+def get_fichas(path="./etc/fichas.csv"):
     """ Regresa las fichas en forma de lista de cadenas. """
     fichas_lista = []
-    file = open("./etc/fichas.csv", "r")
+    file = open(path, "r")
     lineas = file.readlines()
     for linea in lineas:
         fichas_lista = linea.split(',')
@@ -73,7 +110,8 @@ def busca_semilla(data):
             abc = get_juego(data)
             if data['online']:
                 iteraciones = data['iteraciones']
-                solucion = abc.juega_online(iteraciones=iteraciones)
+                limpia = data['limpieza']
+                solucion = abc.juega_online(iteraciones=iteraciones, limpieza=limpia)
                 nectar_local = funcion_nectar_online(solucion)
                 piezas_local = solucion.piezas_jugadas()
                 it = it + 1
@@ -85,7 +123,9 @@ def busca_semilla(data):
                     logging.info('Semilla mejorada: ' + str(sem))
                     logging.info('Nectar final: ' + str(nectar_local))
                     logging.info('Piezas jugadas: ' + str(piezas_local))
-                    logging.info('Filas eliminadas: ' + str(solucion.num_tetris()))
+                    eli = solucion.num_tetris()
+                    logging.info('Filas eliminadas: ' + str(eli))
+                    copia_historial(solucion.get_historial(), r)
                     nectar = nectar_local
                     semilla = int(sem)
                     piezas = piezas_local
@@ -99,9 +139,12 @@ def set_random_local(data):
         if semilla == -1:
             semilla = busca_semilla(data)
         set_random(semilla)
+    else:
+        set_random(semilla=None)
 
 # Punto de entrada del proyecto:
 if __name__ == "__main__":
+    global mejor_historial
     data = get_config_hash()
 
     set_logging(data['logging_level'])
@@ -110,8 +153,20 @@ if __name__ == "__main__":
     
     if data['interactivo']:
         abc.interactivo()
+    elif data['reproduccion_previa']:
+        historial_muestra = lee_historia(data['solucion_previa'])
+        filename, file_extension = os.path.splitext(data['solucion_previa'])
+        filename = filename + '.csv'
+        if os.path.exists(filename):
+            abc.set_lista_piezas(get_fichas(filename))
+        abc.pinta_historia(historial_muestra)
+    elif mejor_historial != None and data['gui']:
+        abc.pinta_historia(mejor_historial)
     elif data['online']:
-        solucion = abc.juega_online(iteraciones=data['iteraciones'])
+        it = data['iteraciones']
+        limpia = data['limpieza']
+        solucion = abc.juega_online(iteraciones=it, limpieza=limpia)
         imprime_datos(solucion)
         if data['gui']:  
+            exit(0)
             abc.pinta_solucion(solucion)

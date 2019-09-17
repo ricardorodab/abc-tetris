@@ -1,6 +1,7 @@
 #!/bin/bash
 
 touch ./etc/fichas.csv
+echo -n "" > ./etc/fichas.csv
 limite=1000
 for i in $(seq 1 $limite)
 do

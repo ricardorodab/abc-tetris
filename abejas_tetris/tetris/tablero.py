@@ -54,6 +54,13 @@ class Tablero:
         """
         self._limpia_automatico = limpieza
 
+    def get_limpieza(self):
+        """
+        Regresa la bandera para saber si eliminar o no 
+        los tetrominoes de forma automática. 
+        """
+        return self._limpia_automatico
+
     def clona(self):
         """
         Regresa un objeto clon.
@@ -94,11 +101,6 @@ class Tablero:
             Es la pieza anterior jugada.
         """
         self._pieza_anterior = pieza
-        for i in self._pieza_anterior.casillas():
-            punto = i.get_punto()
-            x = punto.get_x()
-            y = punto.get_y()
-            self._tablero[x][y] = i
 
     def asigna_pieza_clonada(self, pieza):
         """
@@ -207,7 +209,7 @@ class Tablero:
             Es el movimiento jugado.
         """
         if self._pieza == None:
-            pass
+            return False
         if self.movimiento_valido(move):
             puntos_previos = self._pieza.get_puntos()
             if move == Movimiento.CAE:
@@ -219,6 +221,17 @@ class Tablero:
             else:
                 self._pieza.rota()
             self.__actualiza_pieza(puntos_previos)
+            return True
+        else:
+            return False
+
+    def restaura_pieza(self):
+        """ Si la pieza es vacía vuelve a colocar una anterior"""
+        if self._pieza == None and self._pieza_anterior != None:
+            self._pieza = self._pieza_anterior
+            for i in self._pieza.casillas():
+                i.set_fija(False)
+            self.__actualiza_pieza([])
 
     def juega_movimiento_inverso(self, move):
         """
@@ -229,29 +242,36 @@ class Tablero:
         move : Movimiento
             Es el movimiento que se tiene que retirar.
         """
-        if self._pieza == None:
-           self._pieza = self._pieza_anterior
+        self.restaura_pieza()
         if self._pieza == None:
             return False
         puntos_previos = self._pieza.get_puntos()
-        if move == Movimiento.CAE:
+        if move == Movimiento.CAE and self.__check_cae(True):
             self._pieza.sube()
-        elif move == Movimiento.DER:
+        elif move == Movimiento.DER and self.__check_izq():
             self._pieza.mueve_izquierda()
-        elif move == Movimiento.IZQ:
+        elif move == Movimiento.IZQ and self.__check_der():
             self._pieza.mueve_derecha()
         elif move == Movimiento.FIJ:
             raise Exception("No se puede deshacer fijar pieza")
-        else:
+        elif move == Movimiento.GIR:
             tipo = self._pieza.get_tipo()
             tres_giro = tipo == Tipo.LG or tipo == Tipo.T or tipo == Tipo.RG
             if tres_giro:
                 self._pieza.rota()
                 self._pieza.rota()
+                if self.__check_gir():
+                    self._pieza.rota()
+                else:
+                    self._pieza.rota()
+                    self._pieza.rota()
+                    return False
+            elif self.__check_gir():
                 self._pieza.rota()
             else:
-                self._pieza.rota()
-        tipo = self._pieza.get_tipo()
+                return False
+        else:
+            return False
         self.__actualiza_pieza(puntos_previos)
         return True
 
@@ -260,7 +280,28 @@ class Tablero:
         Limpia las filas llenas.
         """
         if not self._limpia_automatico:
+            self._cuenta_filas_removidas()
             self.__revisa_filas()
+
+    def puede_limpiar(self):
+        """ 
+        Regresa las filas que pueden ser eliminadas.
+        """
+        cuenta_filas = 0
+        limite_x = self._x
+        limite_y = self._y
+        columna = limite_y - 1
+        while columna >= 0:
+            hay_none = False
+            fila = 0
+            while fila < limite_x:
+                if self._tablero[fila][columna] == None:
+                    hay_none = True
+                fila = fila + 1
+            if not hay_none:
+                cuenta_filas = cuenta_filas + 1      
+            columna = columna - 1
+        return cuenta_filas
             
     def puede_fijar(self):
         """
@@ -272,25 +313,30 @@ class Tablero:
             punto = i.get_punto()
             x = punto.get_x()
             y = punto.get_y()
-            if self._y <= y + 1:
+            if self._y == y + 1:
                 return True
             if self._tablero[x][y + 1] != None:
                 if self._tablero[x][y + 1].get_fija():
                     return True
+        return False
     
     def fijar(self):
         """
         Fija la pieza actual en su posición actual.
         """
-        if self._pieza == None:
+        if self.puede_fijar():
+            if self._pieza == None:
+                return False
+            self._pieza_anterior = self._pieza
+            for i in self._pieza.casillas():
+                i.set_fija()
+            self._pieza = None
+            if self._limpia_automatico:
+                self._cuenta_filas_removidas()
+                self.__revisa_filas()
+            return True
+        else:
             return False
-        self._pieza_anterior = self._pieza
-        for i in self._pieza.casillas():
-            i.set_fija()
-        self._pieza = None
-        self._cuenta_filas_removidas()
-        if self._limpia_automatico:
-            self.__revisa_filas()
 
     def print(self):
         """
@@ -359,22 +405,11 @@ class Tablero:
         """
         No dice cuantas casillas vacías tiene alguna no vacia arriba.
         """
-        x = 0
         cubiertos = 0
-        while x < self._x:
-            y = self._y - 1
-            altura_cubiertos = 0
-            primer_none = False
-            while y >= 0:
-                if (not primer_none) and (self._tablero[x][y] == None):
-                    primer_none = True
-                    altura_cubiertos = y
-                elif primer_none and (self._tablero[x][y] != None):
-                    cubiertos = cubiertos + altura_cubiertos - y
-                    primer_none = False
-                    altura_cubiertos = y
-                y = y - 1
-            x = x +1
+        for i in range(self._x):
+            for j in range(self._y):
+                if self._tablero[i][j] == None:
+                    cubiertos = cubiertos + self._helper_cubiertos(i, j)
         return cubiertos
 
     def num_tetris(self):
@@ -396,33 +431,50 @@ class Tablero:
 
     # Funciones auxiliares:
 
+    # Regresa 1 si la casilla esta cubierta por otra.
+    def _helper_cubiertos(self, x, y):
+        if y < 0:
+            return 0
+        if self._tablero[x][y] != None:
+            return 1
+        return self._helper_cubiertos(x, y - 1)
+
     # Cuenta si hay filas que quitar.
     def _cuenta_filas_removidas(self):
         limite_x = self._x
         limite_y = self._y
-        fila = limite_y - 1
-        while fila >= 0:
+        columna = limite_y - 1
+        while columna >= 0:
             hay_none = False
-            columna = 0
-            while columna < limite_x:
-                if self._tablero[columna][fila] == None:
+            fila = 0
+            while fila < limite_x:
+                if self._tablero[fila][columna] == None:
                     hay_none = True
-                columna = columna + 1
+                fila = fila + 1
             if not hay_none:
                 self._num_tetris = self._num_tetris + 1      
-            fila = fila - 1
+            columna = columna - 1
 
     # Revisa si puede caer la pieza actual.
-    def __check_cae(self):
+    def __check_cae(self, inverso=False):
         for i in self._pieza.casillas():
             punto = i.get_punto()
             x = punto.get_x()
             y = punto.get_y()
-            if y + 1 >= self._y:
-                return False
-            if self._tablero[x][y + 1] != None:
-                if self._tablero[x][y + 1].get_fija():
+            if inverso:
+                if y == 0:
                     return False
+            else:
+                if y + 1 >= self._y:
+                    return False
+            if inverso:
+                if self._tablero[x][y - 1] != None:
+                    if self._tablero[x][y - 1].get_fija():
+                        return False
+            else:
+                if self._tablero[x][y + 1] != None:
+                    if self._tablero[x][y + 1].get_fija():
+                        return False
         return True
 
     # Revisa si puede moverse a la derecha la pieza actual.
@@ -498,6 +550,19 @@ class Tablero:
     # Elimina todos las casillas de una fila.
     def __limpia(self, fil):
         limite_x = self._x
+
+        if self._pieza_anterior != None:
+            eliminar_anterior = False
+            for i in self._pieza_anterior.casillas():
+                punto = i.get_punto()
+                y = punto.get_y()
+                eliminar_anterior = eliminar_anterior \
+                    or y == fil \
+                    or y + 1 == 0 
+                punto.set_y(y + 1)
+            if eliminar_anterior:
+                self._pieza_anterior = None
+
         for i in range(limite_x):
             self._tablero[i][fil] = None
         while fil > 0:

@@ -21,6 +21,7 @@ import math
 lista_piezas = []
 
 def get_piezas():
+    global lista_piezas
     return lista_piezas
 
 class Abejas_Tetris():
@@ -53,6 +54,9 @@ class Abejas_Tetris():
         self.lista_piezas = []
 
     def set_lista_piezas(self, piezas):
+        global lista_piezas
+        lista_piezas = []
+        self.lista_piezas = []
         """
         Asigna una lista de piezas a la lista global de piezas.
         Parameters
@@ -93,9 +97,10 @@ class Abejas_Tetris():
             self.colmena.set_funcion_observacion(funcion_observacion_online)
             self.colmena.set_funcion_termino_iteracion(funcion_limpiadora)  
             self.colmena.set_funcion_explotar_fuente(explota_tablero)
+            self.colmena.set_funcion_comparativa(num_tetris)
             self.colmena.inizializa_abejas()
     
-    def juega_online(self, iteraciones=None):
+    def juega_online(self, iteraciones=None, limpieza=False):
         """
         Juega Tetris con abejas de manera online.
         
@@ -104,19 +109,23 @@ class Abejas_Tetris():
         iteraciones=None : int
             Es el número de iteraciones que correrá la partida.
         """
+        if not limpieza:
+            self._tetris.desactiva_limpieza_automatica()
+            self.colmena.actualiza_fuente_inicial(self._tetris)
+        else:
+            self._tetris.activa_limpieza_automatica()
         self.init_colmena()
-        self._tetris.desactiva_limpieza_automatica()
         if iteraciones == None:
             cond = self._tetris.game_over()
             while not cond:
                 self.colmena.itera_colmena()
-                cond = self.colmena.get_mejor_solucion().game_over()
+                cond = self.colmena.get_solucion_final().game_over()
         else:
             for i in range(iteraciones):
                 self.colmena.itera_colmena()
                 if self._tetris.game_over():
-                    return self.colmena.get_mejor_solucion()
-        return self.colmena.get_mejor_solucion()
+                    return self.colmena.get_solucion_final()
+        return self.colmena.get_solucion_final()
 
     def interactivo(self):
         """
@@ -149,11 +158,14 @@ class Abejas_Tetris():
             print("Ingrese número de movimiento:")
             mov = int(input())
             move = moves_posibles[mov]
-            self._tetris.mueve_o_fija(move=move)
-            if self._tetris.ultimo_movimiento() != move:
-                moves.insert(0,move)
-            if move == Movimiento.FIJ:
-                funcion_nectar_online(self._tetris)
+            if move != Movimiento.FIJ:
+                self._tetris.mueve(move=move)
+            else:
+                self._tetris.fija()
+                print('###### NECTAR ######')
+                print(funcion_nectar_online(self._tetris))
+                print('###### FILAS ELIMINADAS #####')
+                print(self._tetris.num_tetris())
             self.dibuja()
             time.sleep(0.05)
         self.quit_gui()
@@ -168,31 +180,31 @@ class Abejas_Tetris():
         historial : list(Movimiento)
             Es el historial de movimientos hechos que pintar.
         """
+        print("Pintando el historial:")
         tetris_tmp = self._tetris
         self._tetris = tetris.Tetris(self._x, self._y)
         self.set_gui()
-        pieza = 0
-        while len(historia) > 0 and not self._tetris.game_over():
-            if self._tetris.requiere_pieza():
+        pieza = 1
+        tipo = self.lista_piezas[0]
+        self._tetris.set_pieza(tipo=tipo)
+        moves = historia
+        time.sleep(5)
+        while len(moves) > 0:
+            move = moves.pop(0)
+            if move == Movimiento.FIJ:
+                self._tetris.fija()
                 tipo = self.lista_piezas[pieza]
-                pieza = pieza + 1
                 self._tetris.set_pieza(tipo=tipo)
-            moves = [Movimiento.CAE, Movimiento.DER, \
-                Movimiento.IZQ, Movimiento.GIR]
-            moves_posibles = []
-            for i in moves:
-                if self._tetris.movimiento_valido(i):
-                    moves_posibles.append(i)
-            if self._tetris.puede_fijar():
-                moves_posibles.append(Movimiento.FIJ)
-            mov = historia.pop(0)
-            move = moves_posibles[mov]
-            self._tetris.mueve_o_fija(move=move)
-            if self._tetris.ultimo_movimiento() != move:
-                moves.insert(0,move)
+                pieza = pieza + 1
+            else:
+                self._tetris.mueve(move=move)
             self.dibuja()
             time.sleep(0.05)
-        time.sleep(1)
+        print('###### NECTAR ######')
+        print(funcion_nectar_online(self._tetris))
+        print('###### FILAS ELIMINADAS #####')
+        print(self._tetris.num_tetris())
+        time.sleep(5)
         self.quit_gui()
         self._tetris = tetris_tmp
 
@@ -206,23 +218,28 @@ class Abejas_Tetris():
             Es el juego de Tetris a dibujar.
         """
         tetris_tmp = self._tetris
-        moves = solucion.get_historial()
+        historial = solucion.get_historial()
+        moves = []
+        for i in historial:
+            moves.append(i)
         self._tetris = tetris.Tetris(self._x, self._y)
         self.set_gui()
-        pieza = 1
-        tipo = self.lista_piezas[0]
+        tipo = self.lista_piezas[self._tetris.piezas_jugadas()]
         self._tetris.set_pieza(tipo=tipo)
-        while len(moves) > 0 and not self._tetris.game_over():
+        while len(moves) > 0:
             move = moves.pop(0)
             if move == Movimiento.FIJ:
                 self._tetris.fija()
-                tipo = self.lista_piezas[pieza]
+                tipo = self.lista_piezas[self._tetris.piezas_jugadas()]
                 self._tetris.set_pieza(tipo=tipo)
-                pieza = pieza + 1
             else:
                 self._tetris.mueve(move=move)
             self.dibuja()
             time.sleep(0.05)
+        print('###### NECTAR ######')
+        print(funcion_nectar_online(self._tetris))
+        print('###### FILAS ELIMINADAS #####')
+        print(self._tetris.num_tetris())
         time.sleep(5)
         self.quit_gui()
         self._tetris = tetris_tmp
@@ -315,7 +332,7 @@ class Abejas_Tetris():
         pygame.draw.rect(self.pantalla, BLANCO, self.frontera_izq)
         pygame.draw.rect(self.pantalla, BLANCO, self.frontera_der)
 
-    # Función que tegresa los puntos de la casillas.
+    # Función que regresa los puntos de la casillas.
     def __get_puntos(self, casillas):
         puntos = []
         for i in casillas:

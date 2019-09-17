@@ -6,15 +6,15 @@ __email__ = "ricardo_rodab@ciencias.unam.mx"
 
 # TAMAÑO DE TABLERO:
 
-TABLERO_ALTURA           = 7
-TABLERO_MARGEN_SUPERIOR  = 40
-TABLERO_MARGEN           = 2
+TABLERO_ALTURA           = 14
+TABLERO_MARGEN_SUPERIOR  = 80
+TABLERO_MARGEN           = 4
 
 # TAMAÑO DE BLOQUES:
                            
-ANCHO_BLOQUE     = 20
-ALTO_BLOQUE      = 20
-MARGEN_BLOQUE    = 1
+ANCHO_BLOQUE     = 40
+ALTO_BLOQUE      = 40
+MARGEN_BLOQUE    = 2
 
 # COLORES:
 

@@ -33,6 +33,10 @@ def parse_tipos(config):
     peso_fila_removida = int(config['peso_fila_removida'])
     peso_altura = int(config['peso_altura'])
     peso_vulnerable = int(config['peso_vulnerable'])
+    limpieza = bool_value[config['limpieza']]
+    funcion = str(config['funcion'])
+    reproduccion_previa = bool_value[config['reproduce_previo']]
+    solucion_previa = str(config['solucion_previa'])
     
     data = {
         'online' : online,
@@ -56,12 +60,16 @@ def parse_tipos(config):
         'peso_cubiertos' : peso_cubiertos,
         'peso_fila_removida' : peso_fila_removida,
         'peso_altura' : peso_altura,
-        'peso_vulnerable' : peso_vulnerable
+        'peso_vulnerable' : peso_vulnerable,
+        'limpieza' : limpieza,
+        'funcion' : funcion,
+        'reproduccion_previa' : reproduccion_previa,
+        'solucion_previa' : solucion_previa
     }
 
     return data
 
-def get_config(path):
+def get_config(path="./etc/config.cfg"):
     """ Dado una ruta, regresa todas las variables de ese archivo. """
     config = configparser.ConfigParser()
     config.read(path)

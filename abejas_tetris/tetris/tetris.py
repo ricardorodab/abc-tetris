@@ -54,6 +54,9 @@ class Tetris:
         """
         return self._x
 
+    def set_game_over(self, flag):
+        self._game_over = flag
+    
     def game_over(self):
         """
         Bandera que nos dice si ya perdimos.
@@ -87,9 +90,7 @@ class Tetris:
         """
         Regresa el último movimiento hecho en el juego.
         """
-        item = self._historial.pop()
-        self._historial.append(item)
-        return item
+        return self._historial[len(self._historial) - 1]
 
     def clona(self):
         """
@@ -97,10 +98,13 @@ class Tetris:
         """
         clon = Tetris(self._x, self._y, self._tablero.clona())
         historial_clone = []
-        for i in self._historial:
-            historial_clone.append(i)
+        for i in range(len(self._historial)):
+            historial_clone.append(self._historial[i])
         clon.set_historial(historial_clone)
         clon.set_piezas_jugadas(self._piezas_jugadas)
+        clon.set_game_over(self._game_over)
+        if not self._tablero.get_limpieza():
+            clon.desactiva_limpieza_automatica()
         return clon
 
     def set_pieza(self, tipo=None):
@@ -142,7 +146,13 @@ class Tetris:
         """
         if move == None:
             raise Exception()
-        self._tablero.juega_movimiento(move)
+        elif move == Movimiento.FIJ:
+            return False 
+        elif self._tablero.juega_movimiento(move):
+            self._historial.append(move)
+            return True
+        else:
+            return False
 
     '''
     Para la vista
@@ -152,7 +162,13 @@ class Tetris:
         Fija la pieza actual en el tablero.
         """
         if self._tablero.puede_fijar():
-            self._tablero.fijar()        
+            if self._tablero.fijar():
+                self._historial.append(Movimiento.FIJ)
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def mueve_o_fija(self, move=None):
         """
@@ -170,33 +186,39 @@ class Tetris:
                 moves_posibles.append(i)
         fijar = self._tablero.puede_fijar()
         if fijar and move == Movimiento.FIJ:
-            self._tablero.fijar()
-            self._historial.append(Movimiento.FIJ)
-            return True
+            if self._tablero.fijar():
+                self._historial.append(Movimiento.FIJ)
+                return True
+            return False
         if len(moves_posibles) == 0 and fijar:
-            self._tablero.fijar()
-            self._historial.append(Movimiento.FIJ)
-            return True
+            if self._tablero.fijar():
+                self._historial.append(Movimiento.FIJ)
+                return True
+            return False
         elif len(moves_posibles) == 0:
             self._game_over = True
             return False
         elif fijar:
             if move == None:
                 move = moves_posibles[get_randrange(len(moves_posibles))]
+            # El 0.3 funciona bastante bien
             if get_random() < 0.3:
-                self._tablero.fijar()
-                self._historial.append(Movimiento.FIJ)
-                return True
+                if self._tablero.fijar():
+                    self._historial.append(Movimiento.FIJ)
+                    return True
+                return False
             else:
-                self._historial.append(move)
-                self._tablero.juega_movimiento(move)
-                return True
+                if self._tablero.juega_movimiento(move):
+                    self._historial.append(move)
+                    return True
+                return False
         else:
             if move == None:
                 move = moves_posibles[get_randrange(len(moves_posibles))]
-            self._historial.append(move)
-            self._tablero.juega_movimiento(move)
-            return True
+            if self._tablero.juega_movimiento(move):
+                self._historial.append(move)
+                return True
+            return False
 
     def siguiente_random(self, tipo=None, move=None):
         """
@@ -228,6 +250,7 @@ class Tetris:
             return True
         elif len(moves_posibles) == 0:
             self._game_over = True
+            return False
         elif fijar:
             if move == None:
                 move = moves_posibles[get_randrange(len(moves_posibles))]
@@ -251,6 +274,12 @@ class Tetris:
         Limpia el tablero de ser necesario, fila por fila.
         """
         self._tablero.limpia()
+
+    def puede_limpiar(self):
+        """
+        Regresa la cantidad de filas que se pueden eliminar.
+        """
+        return self._tablero.puede_limpiar()
 
     def get_casilla(self, x, y):
         """
@@ -311,7 +340,6 @@ class Tetris:
                 valor = self._tablero.juega_movimiento_inverso(mov)
                 if not valor:
                     return None
-                
 
     def num_movimientos(self):
         """

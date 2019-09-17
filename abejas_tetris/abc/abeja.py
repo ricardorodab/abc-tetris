@@ -82,6 +82,7 @@ class Abeja():
             La nueva fuente que la abeja trabajará.
         """
         self._fuente = fuente
+        self._limite = 0
 
     def get_fuente(self):
         """

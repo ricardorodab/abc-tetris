@@ -4,6 +4,7 @@
 # llamaremos semillero para que el programa sea repetible.
 
 touch ./etc/semillas.cfg;
+echo -n "" > ./etc/semillas.cfg
 i=$RANDOM;
 while [ $i != 0 ]; do
     echo -n $RANDOM, >> ./etc/semillas.cfg;

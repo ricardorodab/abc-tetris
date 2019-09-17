@@ -62,11 +62,11 @@ class Casilla:
         """
         self._punto = punto
 
-    def set_fija(self):
+    def set_fija(self, fija=True):
         """
         Coloca como final la posición de la casilla.
         """
-        self._fija = True
+        self._fija = fija
 
     def get_fija(self):
         """
