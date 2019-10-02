@@ -1,0 +1,44 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance = 21mm and 7mm,
+    box/.style = {draw, minimum size=8mm, inner sep=0pt, outer sep=0pt, anchor=center},
+      pin edge = {Straight Barb-, shorten <=1mm,semithick}]
+        \node (h2) [box] {Izq};
+		\node (h1) [box, left=of h2] {Der};
+		\node (h3) [box, right=of h2]    {Gir};
+		\node (h4) [box, right=of h3]    {Cae};
+		\node (q_dots) [draw=none, right=of h4] {$\cdots$};
+		\node (hk) [box, right=of q_dots] {$Mov_{m}$};
+		
+		\node (h5) [box, below=of h4] {Izq};
+		\node (h32) [draw=none, left=of h5] {};
+		\node (q_dots_two) [draw=none, right=of h5] {$\cdots$};
+		\node (hl) [box, below=of hk] {$Mov_{n}$};
+		
+		
+		\draw[dashed,-Straight Barb, shorten <=1mm, shorten >=1mm]
+    (h3.south) edge [bend right]   (h5.north);	
+		
+		\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(h1) edge   (h2);
+    	\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(h2) edge   (h3);
+    	\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(h3) edge   (h4);
+    	\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(h4) edge   (q_dots);    		
+    	\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(h5) edge   (q_dots_two);
+    	\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(q_dots_two) edge   (hl);
+    	\draw[-Straight Barb, transform canvas={yshift= 0mm}]
+    		(q_dots) edge   (hk);
+    	\draw [decorate,decoration={brace,amplitude=6pt,raise=5ex}]
+  (h1) -- (hk) node[midway,yshift=4em]{$\theta_{i}$};
+  
+ 		 \draw [decorate,decoration={brace,amplitude=7pt,mirror,raise=5ex}]
+  (h32) -- (hl) node[midway,yshift=-4em]{$\phi_{i}$};
+    \end{tikzpicture}
+\caption{Historial de movimientos dentro de un juego de Tetris.} \label{fig:listmov}
+\end{figure}

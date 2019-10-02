@@ -1,0 +1,12 @@
+set terminal latex rotate
+set output "images/rainingskylinetres.tex"
+set ytics 5
+set arrow 1 from 0,20 to 5000,20 nohead
+set label "Objetivo" at 2500,18
+set yrange [-2:35]
+set xrange [0:5000]
+set xlabel "Semillas probadas" rotate by 90
+set ylabel "Filas eliminadas"
+set style line 5 lt rgb "red" lw 3 pt 6
+set style line 6 lt rgb "red" lw 3 pt 7
+plot 'images/gnuplot/rainingskylinetres.dat' using 1:2 with lines title 'Función raining-skyline' lt rgb "violet", 'images/gnuplot/rainingskylinetres.dat' using 1:3 with linespoints ls 5 title 'Función raining-skyline ponderada', 'images/gnuplot/rainingskylinetres.dat' using 1:4 with linespoints title 'Función raining-skyline ponderada por filas eliminadas'

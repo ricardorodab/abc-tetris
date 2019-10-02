@@ -1,0 +1,172 @@
+\chapter{Tecnologías utilizadas}
+
+Aunque el concepto de complejidad de un algoritmo, clases de complejidad y
+eficiencia mantienen un estado invariante al entorno de desarrollo de
+los programas, el análisis de la experimentación está inevitablemente
+comprometido por el desempeño del hardware y software que se usa. Para
+darle sentido a los resultados, es muy importante conocer las herramientas 
+usadas, así como el ambiente en el que los experimentos fueron realizados.
+
+\section{Python}
+
+En la década de los ochenta, en el centro Wiskunde de informática, en Ámsterdam,
+Guido van Rossum trabajaba como desarrollador de un lenguaje de programación
+llamado \textit{ABC} cuyo propósito era ser una herramienta de desarrollo
+fácil de aprender para personas no acostumbradas a programar. Rossum vio la
+necesidad de crear un lenguaje de \textit{scripting}\footnote{En
+algunos textos referidos como \textit{Guiones del intérprete de comandos}, son
+programas en las que sus órdenes son ejecutadas de manera
+secuencial~\cite{interprete-comandos}.} sobre su proyecto en el lenguaje ABC,
+por lo que creó una máquina virtual, un programa \emph{parser} y otro de ejecución de
+comandos; agregó una sintaxis básica, usó indentación para definir bloques
+y creó un pequeño conjunto de tipos de datos. Así nació
+Python~\cite{python-interview}.
+
+Python es un lenguaje de programación de propósito general, Turing completo,
+dinámicamente tipificado y con influencia de múltiples paradigmas; incluidos
+pero no limitado a orientación a objetos, funcional e imperativo~\cite{python}.
+Una de las principales características por las que Python es reconocido, es por
+su manera de definir bloques de código: la indentación de un programa en Python
+es fundamental para la semántica de un programa.
+
+Python se encuentra desde el 2003 como uno de los lenguajes de programación
+más populares de acuerdo al índice de clasificación de la comunidad programadora
+TIOBE~\cite{tiobe}. Cientos de compañías como Google, Yahoo, Disney Animation,
+NASA, IBM, usan Python como lenguaje de desarrollo para resolver
+problemas en diversas áreas~\cite{python-usage}.
+
+Actualmente existen muchas versiones de Python; las más usadas son 
+las versiones 2.7 y 3.5 que en conjunto con el administrador de
+paquetes\footnote{Un administrador de paquetes es un programa que tiene como
+propósito la instalación, actualización y configuración de paquetes de software.}
+PIP, proveen de cientos de bibliotecas listas para usar e implementar soluciones
+a problemáticas de diversa índole~\cite{python}.
+
+Otra de las ventajas más grande que posee Python sobre otros lenguajes de alto
+nivel, es su ambiente de desarrollo
+y ejecución; Python posee como herramienta la creación de sus propios ambientes
+virtuales con sus propio sistema de archivos aislados e independientes al
+sistema local. La ventaja principal de mantener un ambiente de desarrollo
+independiente, es la instalación y manejos de paquetes en un sistema donde
+aquellos que poseen otros ambientes virtuales o el mismo ambiente
+local no interfiera ni genere conflictos por paquetes previamente instalados o
+por versiones diferentes~\cite{venv}. %python3 -m venv ./.env
+
+En los últimos años Python en su desarrollo se ha orientado a mejorar la
+eficiencia de tiempo de respuesta de sus llamadas a sistema; la forma en la que
+Python mejora su velocidad aún siendo un lenguaje que típicamente usa un
+intérprete, es generando archivos con extensión \texttt{.pyc}, que son archivos
+en lenguaje máquina, los cuales contienen funciones e instrucciones previamente
+ejecutadas y optimizadas para su posterior uso repetitivo~\cite{python}. De
+cualquier manera, Python sigue teniendo algunos problemas para escalar a
+sistemas grandes y complejos.
+
+
+\subsection{pygame}
+
+Una de las razones por las que Python se hizo altamente reconocido, fue por la
+facilidad de hacer uso de bibliotecas externas al núcleo del lenguaje. Existen
+una gran cantidad de bibliotecas muy conocidas y usadas mundialmente,
+ya sea por la facilidad que proveen o por lo conveniente que resultan sus
+soluciones. Un ejemplo es la
+biblioteca Numpy que posee un conjunto de funciones de uso científico ampliamente
+reconocido por la comunidad investigadora, por ser de gran utilidad en numerosos 
+proyectos~\cite{numpy}.
+
+La biblioteca pygame es una biblioteca de Python, de código abierto que sirve para realizar 
+aplicaciones multimedia como animaciones o videojuegos; existen 
+alternativas ya programadas que tiene como propósito ejecutar videojuegos 
+publicados originalmente para la consola \textit{Nintendo Entertainment System} 
+o \textit{NES}, sin embargo, las opciones consideradas presentan la inconveniencia de no poder 
+modificar el tablero a voluntad de manera directa y simplificada.~\cite{gym-tetris,nespy}.
+
+Si bien el propósito de las bibliotecas pygame puede ser la creación de 
+videojuegos donde la optimización de gráficos y ejecución requiere el mayor 
+cuidado, sólo se usará como una herramienta de visualización de resultados debido 
+a la naturaleza de la heurística de colonia de abejas artificiales~\cite{pygame}.
+
+
+
+\section{Git}
+
+Durante el desarrollo de cualquier proyecto de software existen muchas herramientas útiles para
+mejorar y hacer más eficiente el flujo de trabajo. Un ejemplo de software útil son
+los controladores de versiones, también llamados \textit{versionadores}.
+Los controladores de versiones son sistemas que
+mantienen un registro (en un lugar llamado repositorio) de todos los cambios
+realizados a un conjunto de archivos rastreables, produciendo la oportunidad de
+observar un historial de modificaciones realizadas en un periodo de
+tiempo~\cite{git-about}. Existen dos categorías principales de controlador de
+versiones: los versionadores de repositorios centralizados que son aquellos en los que los
+archivos que están siendo rastreados se encuentran en un repositorio central,
+único, que todos los desarrolladores modifican; y los versionadores de repositorios
+distribuidos que mantienen muchas copias del código en distintas computadoras e
+implementan un sistema de comunicación de cambios mediante un historial. De este
+último tipo es uno de los versionadores más usados: Git~\cite{scopatz2015effective}.
+
+Git fue desarrollado en el 2005 por el mismo creador de uno de los proyectos más
+grandes de software libre que existe; el proyecto Linux necesitaba de un controlador de
+versiones debido a su particularidad de ser un sistema operativo que es
+modificado por miles de personas alrededor del mundo. Linus Torvalds
+consideró necesario la creación de Git como herramienta rápida, segura y que
+soportara desarrollo de código de manera no lineal, para mantener una buena
+comunicación de desarrollo del proyecto Linux~\cite{git-about2,git-commit}.
+
+Si bien el uso básico de Git es sencillo, dominarlo puede llegar a ser un
+trabajo de años de experiencia. Un programador sin experiencia en la herramienta
+puede comenzar a realizar seguimiento y registro de cambios en el sistema de
+archivos con un par de comandos (\texttt{git init}, \texttt{git add -A},
+\texttt{git commit} en particular).
+
+Los cambios son guardados dentro de un árbol de registros donde cada rama 
+del árbol pertenecerá a una secuencia de historias. 
+Cada cambio agregado y almacenado genera una huella digital única llamada \textit{hash}. 
+Este \emph{hash} único es el identificador del espacio
+temporal del historial donde se almacena la información $I$ en el tiempo $T$~\cite{git-about}.
+
+Una de las conveniencias de usar Git como herramienta para proyectos de desarrollo 
+de software es poder regresar a algún punto en una versión del historial. Es
+conveniente conocer el \emph{hash} con el comando \texttt{git log} y familiarizarse con 
+la orden \texttt{git revert}.
+
+Es importante aclarar que el uso de Git va más allá de mantener un registro 
+y poder mover el estado actual del proyecto por uno de sus estados 
+almacenados; Git posee características que benefician al trabajo en equipo,
+depuración de errores, pruebas y mantenimiento, desarrollo remoto y varias
+características que lo han hecho uno de los programas con mayor número de usuarios y 
+de traducciones: Git existe en doce idiomas y más de seis traducciones parciales.
+
+Durante el desarrollo de este proyecto se usará Git de manera constante
+para llevar un registro de todos los cambios hechos en el código de la
+implementación de la heurística.
+
+\section{Ambiente físico}
+\label{sec:ambiente-fisico}
+
+Invariablemente los resultados obtenidos pueden ser muy diferentes dependiendo 
+el equipo en el que se prueben así como su sistema operativo y su versión correspondiente. 
+El hardware es mejorado con notoriedad cada poco tiempo de acuerdo a las observaciones 
+como las de Mark Kryder o la reconocida ley de Moore, por lo que no es de extrañarse 
+que con el paso de tiempo los resultados parecieran mejorar. El software también 
+sufre de mejoras; algoritmos de funciones de los sistemas operativos son actualizados 
+constantemente para garantizar el mayor rendimiento posible. 
+
+El desarrollo, pruebas y análisis fueron realizadas en una computadora 
+ASUS, ZenBook Pro 14 modelo UX450FDX. La velocidad de comunicación de 
+la memoria RAM, 8 GB DDR4 Synchronous es de 2,400 MHz (a 0.4 ns). Los 
+tres niveles de cache (L1, L2 y L3) poseen respectivamente 256 KB, 1 MB y 6 MB.
+El procesador del ambiente de ejecución es de la marca Intel(R) Core(TM), 
+modelo i5-8265U, x86\_64, 8 núcleos de dos hilos cada uno y corre a una velocidad 
+promedio máxima de 3.9 GHz. 
+
+El sistema operativo instalado en la computadora es una distribución de GNU/Linux 
+Debian, con una versión actualizada del kernel 4.19.0-0.bpo.4-amd64, que corre 
+sobre la versión de la arquitectura de 64 bits. La versión del lenguaje de programación usada 
+también es relevante debido a que los lenguajes de programación son constantemente 
+modificados y mejorados. El ambiente de desarrollo que se usa es la versión 
+de Python 3.5.3.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../main"
+%%% End:

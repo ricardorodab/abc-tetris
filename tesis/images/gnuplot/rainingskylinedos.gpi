@@ -1,0 +1,9 @@
+set terminal latex rotate
+set output "images/rainingskylinedos.tex"
+set ytics 5
+set yrange [-2:20]
+set xrange [0:5000]
+set xlabel "Semillas probadas" rotate by 90
+set ylabel "Filas eliminadas"
+set style line 5 lt rgb "red" lw 3 pt 6
+plot 'images/gnuplot/rainingskylinedos.dat' using 1:2 with lines title 'Función raining-skyline' lt rgb "violet", 'images/gnuplot/rainingskylinedos.dat' using 1:3 with linespoints ls 5 title 'Función raining-skyline ponderada'

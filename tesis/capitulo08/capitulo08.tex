@@ -1,0 +1,63 @@
+\chapter{Conclusiones y trabajo futuro}
+
+El origen y motivación de realizar este trabajo surgió de una primera 
+implementación realizada en una clase optativa que lleva por nombre 
+\textit{Seminario de Ciencias de la Computación B} y tenía por tema principal 
+\textit{Heurísticas de Optimización Combinatoria}. 
+Si bien la primera implementación (que se puede encontrar 
+en la siguiente dirección: \url{https://github.com/ricardorodab/abejas-tetris}) 
+conseguía realizar combinaciones de juego con cierto grado de éxito, 
+careció (por una cuestión de tiempo) del detalle de diseño, desarrollo de funciones 
+de costo y pruebas que sí son realizadas en este trabajo.
+
+Esta segunda implementación se originó como un experimento para entender el comportamiento 
+de una heurística documentada a un problema ampliamente conocido. 
+Es el deseo del autor que la compilación de terminología ocupada en conjunto a 
+las definiciones mencionadas, teoremas, ejemplos y experimentos resulten 
+de una mayor facilidad de entendimiento al lector para despertar su curiosidad 
+y si lo desea, continuar las investigaciones que este trabajo introduce.
+
+Se tomaron las bases teóricas para explicar por qué la selección del problema 
+de Tetris. Se explicó el funcionamiento de las heurísticas como 
+lo es la \textit{Colonia de Abejas Artificiales} o 
+\textit{ABC} por sus siglas en inglés. Se desarrolló 
+la justificación de tomar una heurística sobre otros métodos resolutivos y se argumentó  
+el porqué del diseño que se implementó para realizar la experimentación.
+
+Aunque el enfoque dado a la forma de resolver el problema de Tetris fue 
+reducido a dos funciones, es parte del diseño la facilidad de comunicarle 
+a la heurística la implementación de nuevas 
+funciones de desempeño para extender la experimentación a nuevos métodos. 
+
+El conjunto de resultados generados por la implementación muestran que: 
+
+\begin{enumerate}
+
+\item Sin importar que el problema de Tetris sea un problema \textsl{NP}-completo, 
+existen métodos prácticos que pueden encontrar soluciones de buena calidad.
+
+\item La heurística ABC es un buen método de resolución de problemas ya  
+que la función de costo de la que depende sus resultados es independiente al 
+comportamiento del colectivo en la colmena.
+
+\end{enumerate}
+
+Un paso siguiente a la solución propuesta en este trabajo es crear 
+evaluaciones \textit{offline} tomando en consideración las piezas siguientes 
+como origen de las fuentes de la heurística. Esta propuesta queda fuera del 
+alcance de este trabajo debido a que las funciones y el diseño usado deberán 
+ser modificados de manera profunda; sin embargo, la heurística debería 
+mantener siempre la misma estructura sin cambios considerables. 
+
+Otra optimización necesaria sobre el diseño de la heurística es la 
+paralelización de las tareas dentro de la colmena. Cada tipo de abeja 
+puede ser dividida a un proceso productor-consumidor independiente que 
+espere a ser alimentada de fuentes para su trabajo. El resultado 
+mostrado no cambiará con dicha optimización pero el tiempo de respuesta 
+por parte de la heurística se vería reducido.
+
+Para finalizar este trabajo hay que mencionar que las metas propuestas 
+como tiempo de juego y número de filas eliminadas, no sólo fueron alcanzadas 
+sino que superadas por más del doble y se plantea la pregunta \textit{¿podría la 
+heurística vencer a un jugador experto en tiempo de juego real con una mejor 
+función de costo?}

@@ -1,0 +1,8 @@
+set terminal latex rotate
+set output "images/satfigure.tex"
+set xtics 1
+set xrange [2:6]
+set yrange [0:2000]
+set ylabel "Asignaciones" rotate by 90
+set xlabel "Fórmulas"
+plot 'images/gnuplot/sat.dat' with linespoints notitle

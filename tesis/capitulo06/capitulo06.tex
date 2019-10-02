@@ -1,0 +1,482 @@
+\chapter{Análisis y diseño de la implementación}
+
+Un buen diseño de software 
+apegado a buenas prácticas de programación contribuyen a la obtención 
+de resultados de calidad, menos errores durante la implementación y un 
+entendimiento más sencillo para terceros. Durante este capítulo, se analizan  
+las decisiones de la implementación y el motivo del diseño. Todas las clases y 
+funciones discutidas a continuación se encuentran en el 
+\cref{apendice:code} y en la liga 
+\url{https://github.com/ricardorodab/abc-tetris}.
+
+\section{Análisis del sistema}
+
+Para encontrar soluciones a la colocación de las piezas de Tetris, primero se tiene que 
+partir del poder acceder a toda la información del juego para el análisis de los desenlaces. 
+En el \cref{subsec:formalizacion} se realiza la formalización del juego y con ella las 
+reglas a seguir durante la implementación:
+
+\begin{enumerate}
+\item Se debe diseñar un tablero que almacene la información del conjunto de 
+piezas.
+
+\item Se debe tener piezas que posean un tipo específico, posición y orientación. 
+
+\item Se debe programar un modelo de rotación específico para las piezas de 
+acuerdo a su tipo.
+
+\item El tablero, piezas y modelo de rotación deben estar regidos en todo 
+momento por las reglas del juego.
+\end{enumerate} 
+
+El objeto que contenga los entes principales del juego, deben también tener 
+métodos de obtención de información relevantes a la heurística como datos que 
+sirvan para generar una función de costo y métodos para forzar ciertos 
+comportamientos indicados por un objeto externo (como lo es la misma heurística 
+en este caso) para pasar de un estado del juego a un estado siguiente.
+
+Una regla adicional necesaria para la utilización de cualquier conjunto de reglas 
+a optimizar es que todo objeto que reciba la heurística debe ser ``clonable'', 
+esto quiere decir que exista un método o función la cual regrese un objeto idéntico 
+al que lo llama y que la heurística tenga la libertad de modificar sin afectar el 
+estado del objeto clonado original.
+
+Del lado de la heurística el elemento más importante a considerar es el 
+comportamiento de la colmena como un conjunto de funciones que realizan 
+las abejas que habitan en ella en un periodo de tiempo. Cada abeja 
+creada dentro de la colmena tiene la tarea de explorar y trabajar o 
+de observar. La necesidad de dividir a las abejas de esta manera se puede entender 
+en el artículo \cite{karaboga2008performance} donde el autor de la heurística, 
+Karaboga, realiza pruebas que concluyen en que tener el 50\% de abejas observadoras 
+incrementa el néctar de sus soluciones. 
+
+Durante una iteración de la colmena se deben realizar las siguientes acciones: 
+
+\begin{enumerate}
+\item Si la colmena no tiene abejas, inicializarlas.
+
+\item Mandar a llamar al método que libera a las exploradoras y las transforma en 
+trabajadoras asociadas a una fuente.
+
+\item Mandar a llamar a las abejas trabajadoras para que recolecten néctar de su 
+fuente y generen información para hacer el \textit{waggle-dance}.
+
+\item Hacer que las abejas observadoras escojan una fuente y ejecutar las 
+funciones implementadas para la observación de cada fuente vecina. 
+ 
+\end{enumerate}
+
+El problema específico a resolver no debe afectar el comportamiento de la 
+heurística por lo que se puede aprovechar las propiedades de lenguajes en el 
+paradigma funcional que ofrece 
+Python y asignar funciones como parámetros y atributos para que la ejecución de las abejas 
+sea independiente al problema y sean los atributos de cada abeja los 
+llamados para evaluar las fuentes.
+
+Un último paso para poder operar con la heurística y el juego es el conjunto 
+de métodos que realizan la comunicación entre ambos; los resultados se deben unir de alguna 
+manera ya que el resultado de cada iteración es la entrada de la 
+siguiente. Las funciones que las abejas esperan y necesitan para realizar su 
+trabajo dentro de la heurística también es necesario comunicarlo a la hora 
+de instanciar la colmena.
+
+Una buena práctica es que los parámetros de experimentación no sean modificados 
+directamente en el código sino que se deben encontrar como entrada, en algún archivo 
+de configuración para su fácil modificación y preservar así un buen diseño. Es 
+conveniente implementar métodos asociados al manejo del archivo de entrada así como un objeto 
+que contenga siempre estos parámetros desde el principio de la ejecución del programa.
+
+\subsection{Abejas observadoras}
+
+Las abejas observadoras tienen un nivel de dificultad un poco mayor de diseño e 
+implementación debido a la naturaleza de las acciones que toman. Una abeja 
+observadora primero le es asignada una fuente $i$ de las ya trabajadas con 
+probabilidad 
+
+\begin{displaymath}
+  P_{i} = \frac{F(\theta_{i})}{\sum_{k=1}^{n} F(\theta_{k})}.
+\end{displaymath}
+
+Se debe considerar el caso donde después de recorrer todas las fuentes, la 
+abeja observadora se queda sin alguna asignación de fuente. 
+Una abeja observadora no se debe quedar 
+sin fuente por lo que de existir un abeja en este caso se debe volver a iterar 
+sobre todas las fuentes hasta que le sea asignada. Una solución para evitar este 
+problema del no determinismo a la hora de asignar parejas, es duplicar la 
+probabilidad de asignación de todas las soluciones por cada iteración para 
+evitar que se recorra demasiada veces la lista de fuentes. 
+
+Un problema aún mayor es la localización de fuentes vecinas. En el caso particular 
+de Tetris, se necesita alguna manera de conseguir una fuente vecina a un punto 
+del tablero. La definición de fuente vecina es 
+
+\begin{displaymath}
+  \theta_{i}(c+1) = \theta_{i}(c) \pm \phi_{i}(c)
+\end{displaymath}
+
+\noindent
+donde $\theta_{i}(c)$ es la solución $i$-ésima. El primer enfoque resolutivo de este 
+problema fue el jugar movimientos aleatorios posteriores a una fuente, 
+sin embargo dichos movimientos serían correspondientes a un punto futuro de la partida 
+por lo que no se considera una fuente vecina sino la fuente $i$ explotada como 
+lo haría una abeja trabajadora. 
+Una forma en la que $\phi_{i}(c)$ es encontrada es mantener un registro de 
+movimientos que se jugaron para llegar a $\theta_{i}(c)$ y poder cambiar algunos 
+movimientos previos con ayuda de un \textit{historial}.
+
+El historial no es más que una lista de movimientos $L_{\theta}$ que se han hecho hasta un 
+tiempo $T$. Es posible eliminar un número aleatorio $\delta_{1}$ de movimientos 
+para posteriormente agregar en la lista otro número de movimientos aleatorios $\delta_{2}$ hasta 
+llegar a $T$ con una lista de movimientos $L_{\phi}$. Los tiempos $T$ fueron seleccionados 
+como los puntos en 
+el que las piezas son fijadas, esto debido a que ese comportamiento es una invariante 
+para todas las piezas del juego.
+
+\input{./images/lista-movimientos.tex}
+
+\subsection{Función de costo}
+
+La función de costo o también conocida como función \textit{fitness} es la encargada 
+de calificar una solución propuesta por la colmena para su posterior uso. 
+Si una función de costo es de baja calidad, los resultados serán de igual forma 
+de baja calidad. Una buena función de costo deberá premiar con una mejor 
+calificación a los tableros que resulten con una mejor estrategia de juego y 
+deberá desanimar aquellos tableros que se consideren resultados de malas decisiones. Es 
+necesario que por cada modo de juegos o solicitud a resolver exista una función 
+de costo enfocada a resolver dicha solicitud como en el caso de Tetris y la 
+heurística de abejas artificiales, la cual usa una función de costo llamada 
+``néctar'' que es de tipo \textit{higher is better} (entre más grande el 
+resultado, mejor solución).
+
+Adicionalmente a la función para conseguir el néctar, la colmena necesita 
+otras tres funciones para su correcto funcionamiento y ofrece una cuarta 
+función completamente opcional para un comportamiento positerativo: %Es válido
+
+\begin{itemize}
+\item\textbf{Función para buscar fuente:} Esta función es la que usarán 
+las abejas exploradoras para entregar una fuente que habrá que explotar.
+
+\item\textbf{Función para explotar fuente:} Esta función es la que usarán 
+las abejas trabajadoras para seguir explotando una fuente y modificar su estado.
+
+\item\textbf{Función de observación:} Esta función es la que usarán 
+las abejas observadoras y, para la instancia de Tetris específica, es la 
+función que eliminará movimientos en el historial para crear una nueva 
+combinación de movimientos jugados.
+
+\item\textbf{Función opcional de término:} Esta función realiza una acción adicional 
+sobre las fuentes al finalizar la iteración de la colmena, en el caso de Tetris 
+limpia las filas si es que se deben limpiar.
+\end{itemize}
+
+\section{Diseño del sistema}
+
+Para lograr el objetivo de crear un sistema que resuelva hacer operaciones 
+con el problema de Tetris, operar con una heurística para encontrar soluciones y 
+comunicarse entra ambos con una lógica sencilla pero manteniendo buenas prácticas de 
+programación, se dividió en tres componentes principales para poder 
+lograr apegarse al principio de orientación a objetos: 
+la heurística ABC, el juegos de Tetris y la comunicación Abejas-Tetris.
+
+\input{./images/uml/estructura-proyecto.tex}
+
+\subsection{Orientación a Objetos}
+
+La decisión de realizar un diseño que siga los principios de la Orientación a 
+Objetos (u OO) tiene como sustento la abstracción necesaria de los entes participantes 
+de la heurística, que responderán a estímulos o mensajes recibidos mediante 
+la ejecución de métodos o funciones del juego de Tetris. 
+
+Para un programador acostumbrado a la OO, el modelo propuesto por Dervis 
+Karaboga~\cite{karaboga2005idea} donde enuncia un conjunto de individuos 
+participantes como son las abejas, colmena y fuentes, posee una relación bastante 
+fácil de traducir a entes que tienen estructura, comportamiento e identidad (que son 
+las componentes principales que todo objeto tiene en su 
+descripción~\cite{gaona2007introduccion}) y que comparten un propósito definido 
+en la heurística sin importar su comportamiento unitario. 
+
+La experiencia personal como estudiante de la carrera de Ciencias de la Computación 
+en la Facultad de Ciencias, suma un conjunto de prácticas donde la abstracción 
+a la hora de realizar la toma de decisión sobre las clases, atributos y métodos 
+así como el lenguaje de programación, paradigmas y tecnologías son refinada con 
+proyectos, clases y prácticas desde el primer semestre hasta el último de la 
+estancia como alumno. 
+
+Por último, el paradigma orientado a objetos tiene como una de sus 
+características principales más atractivas lo intuitivo de la descripción 
+de objetos reales, con atributos que a su vez pueden ser objetos con sus 
+propios atributos compuestos previamente definidos~\cite{Lewis:2007:JSS:1554921}.  
+Por parte del juego de Tetris esta característica es muy atractiva debido a que 
+el tablero está constituido por un cojunto de entes (como son las casillas, piezas, 
+puntos) que habrá que definir a su vez y que en conjunto posee un 
+comportamiento que dependerá del estado unitario así como la comunicación de 
+todos los objetos dentro del juego. 
+
+\subsection{Diseño de Tetris}
+
+Una partida de Tetris lleva varios agentes involucrados como lo son 
+el tablero, que puede estar vacío o formado por piezas; y las piezas 
+que están formadas por cuatro casillas y posee un identificador llamado 
+\textit{tipo}, que es alguna constante para indicar cuál de las siete posibles 
+piezas es. Cada casilla que conforma la pieza posee un estado de movimiento 
+que puede ser fijo o movible y un punto de la forma $(x,y)$ que indica 
+su posición en el tablero. 
+
+Se definieron cinco clases y dos enumeraciones para construir una lógica 
+robusta y modular. La primera clase y la más sencilla es la clase \texttt{Punto}, 
+conformado por dos números enteros, $x$ y $y$. Cada objeto de la clase 
+\texttt{Casilla} posee un objeto punto y un atributo llamado \texttt{\_fija} que 
+es una bandera para conocer el estado actual de esa casilla; si la bandera 
+se encuentra en \texttt{True} significa que la casilla es parte de una 
+pieza que se está jugando actualmente.
+
+La clase \texttt{Pieza} por su parte posee un atributo del tipo \texttt{Tipo}, que 
+es una enumeración con siete posibles valores que sirve para identificar a los tetrominós, 
+una orientación de la forma \linebreak $x = (90 \times k)$ $\mod$ $360$, una posición que es un punto 
+de la casilla principal de la pieza y una lista de cuatro elementos que contiene 
+a las casillas. 
+
+El tablero del juego posee referencias a las casillas de las piezas en una matriz 
+bidimensional de casillas, una pieza actual y una pieza anterior. Aún cuando 
+el tablero guarda las casillas, el estado de las piezas dejan de importar 
+cuando una nueva pieza es ingresada al tablero por 
+lo que el objeto pieza es eventualmente eliminado por el recolector de basura. Es 
+en el objeto tablero donde las dimensiones del juego son almacenadas así como 
+la puntuación\footnote{Se toma como puntuación al número de filas removidas 
+durante una partida de Tetris.} del juego. Si bien la clase \texttt{Tablero} tiene 
+definidos métodos que modifican el estado de una partida de Tetris, 
+la lógica ha sido delegada a la clase \texttt{Tetris} que es la encargada de 
+mandar a llamar a los métodos para modificar el juego.
+
+La clase \texttt{Tetris} además de poseer un tablero, un historial de movimientos y un 
+estado booleano llamado \texttt{\_game\_over} que indica si el juego ha finalizado, 
+es la clase destinada a ser usada como interfaz para ser ejecutada por la heurística 
+por lo que la lógica y datos del juego son modificados y obtenidos en su 
+totalidad a través de sus métodos.
+
+\input{./images/uml/diseno-tetris.tex}
+
+\subsection{Diseño de la heurística ABC}
+
+Para un buen desempeño de la heurística y que funcione de acuerdo a la 
+descripción de Karaboga, una colonia de abejas artificiales constituyen una 
+colmena válida cuando existen tres tipos de abejas: las abejas exploradoras, 
+las abejas empleadas o trabajadoras y las abejas observadoras. El tipo de 
+cada abeja es independiente y puede ser representado por una constante, es por ello 
+que se decidió realizar una enumeración con los tipos de abejas en 
+la clase \texttt{Tipo\_Abeja}.
+
+La clase, \texttt{Abeja} si bien sencilla y relativamente corta, está construida 
+pensando en que el problema que la heurística resuelva no sea exclusivamente el 
+juego de Tetris sino algo más general. Las abejas tienen un tipo, 
+una fuente que es el punto de partida de cada abeja y es \texttt{None} al 
+principio de la creación de cada objeto, una variable \texttt{\_limite} 
+que indica el número de veces que una abeja puede visitar a una fuente, una 
+variable \texttt{\_delta} que le sirve a las abejas observadoras para saber cuánto 
+``alejarse'' de la fuente original.
+
+Las abejas tienen además cuatro funciones que será explicada su implementación 
+en el siguiente capítulo debido a la particularidad de que 
+su definición tiene un impacto directo sobre los resultados. 
+Cada función será usada dependiendo el rol 
+que cada abeja tenga que cumplir en la colmena:
+
+\begin{itemize}
+\item \texttt{\_busca\_fuente:} Dado un estado inicial, esta función deberá 
+manejar de alguna forma el cómo encontrar fuentes. La función debe recibir un objeto 
+del tipo de la fuente y debe regresar un objeto de tipo de la fuente.
+
+\item \texttt{\_observadoras:} Dado una fuente y un delta, esta función debe 
+buscar fuentes vecinas partiendo de la fuente que reciba y ``alejándose'' una 
+delta distancia. La función debe regresar un objeto de tipo de la fuente.
+
+\item \texttt{\_nectar:} Es la función que habrá que definir con mayor cuidado 
+puesto que todas las soluciones y comportamiento de la colmena se verá afectado 
+por esta función. La función recibe una fuente y de alguna forma la evalúa para 
+regresar un número. La forma en la que se trabaja en la colmena es \textit{higher 
+is better}, esto quiere decir que entre más grande el número que esta función 
+regrese, mejor la fuente es.
+
+\item \texttt{\_explotar:} Esta es una función que recibe una fuente en un tiempo 
+$T_{i}$ y regresa la evaluación de una nueva fuente en algún estado $T_{i+k}$. La nueva fuente 
+sustituirá a la fuente anterior dentro de la colmena.
+\end{itemize}
+
+La colmena es el objeto que comunica a todas las abejas y fuentes, es el origen  
+principal de datos de la heurística. La colmena tiene un tamaño constituido de 
+la siguiente manera: 
+
+\begin{displaymath}
+  \frac{|colmena|}{2} = |Empleadas \cup Exploradoras| = |Observadoras|.
+\end{displaymath}
+
+Otro atributo importante de la colmena es la fuente inicial. Sin una fuente 
+inicial, una abeja no podría empezar a explorar, trabajar ni observar debido a 
+que debe existir un estado inicial para que todas las abejas trabajen en la colmena. 
+
+\input{./images/uml/diseno-abc.tex}
+
+Durante una iteración de la colmena, las funciones principales a ser llamadas 
+en orden son \texttt{\_itera\_exploradoras()}, \texttt{\_itera\_empleadas()} e 
+\texttt{\_itera\_observadoras()}. Si a la colmena le fue asignada una 
+función positerativa, al terminar una iteración a cada fuente $i$ se 
+mandará a ejecutar la función \texttt{\_termino\_iteracion($i$)}.
+
+Cada una de las funciones con prefijo \texttt{\_itera\_} se recorre al 
+conjunto de abejas de cierto tipo y con ayuda de métodos y funciones 
+auxiliares, realizan las acciones que cada abeja tiene destinada para que 
+en la suma del conjunto de las acciones de todas las abejas contribuyan 
+a seleccionar las mejores fuentes y construir una mejor solución en cada 
+iteración.
+
+\section{Comunicación heurística-emulador}
+
+El diseño actual delega la responsabilidad del buen funcionamiento 
+casi totalmente al objeto que hace uso de las clases 
+\texttt{Colmena} y \texttt{Tetris}. Dichos objetos deberán invocar a 
+algunas funciones previas a la interacción de ambos, como la 
+asignación de las funciones a la colmena o desactivar la opción de 
+quitar filas en automático dentro de un juego de Tetris. La clase 
+encargada de realizar estas llamadas y generar un comportamiento 
+armonioso entre ambos objetos es la clase \texttt{Abejas\_Tetris}. 
+
+
+\input{./images/uml/diseno-a-t.tex}
+
+Dentro de la clase \texttt{Abejas\_Tetris} se almacenan como atributos 
+una partida de Tetris y una colmena con abejas, una bandera que nos dice 
+el modo de juego, la lista de piezas que se jugarán y una segunda bandera 
+que nos dice si el juego ha finalizado. Es necesario definir también las 
+funciones de evaluación que las abejas 
+usarán ya que es en este punto donde la colmena debe recibir cada una 
+de las funciones para la evaluación de los tableros que más adelante se 
+discutirán.
+
+\section{Visualización de datos}
+
+Una vez que se haya creado un historial de ejecuciones, es natural querer 
+ver de manera secuencial las decisiones tomadas por la heurística y seguir paso 
+a paso cada iteración del tablero para analizar el impacto de la función de costo 
+y el comportamiento de la colmena de una manera visual. Dado que se necesita tanto de la solución 
+propuesta por la colmena y las operaciones sobre un tablero (que tiene de estado 
+inicial una partida nueva), el lugar más conveniente para crear las funciones 
+de visualización es el mismo lugar en el que ocurre la lógica de ambos.
+
+El método \texttt{pinta\_solucion()} dentro de la clase \texttt{Abejas\_Tetris}, 
+recibe una lista de movimientos e inicializa los parámetros de la biblioteca 
+de visualización \textit{pygame}. Mientras la lista que recibe no esté vacía o el 
+juego no llegue a un estado donde el usuario\footnote{El usuario en este 
+caso particular es la colmena.} pierda, el método 
+mandará a la lógica del juego la orden de moverse a un estado siguiente al ejecutar 
+el movimiento que saque de la cabeza de la lista, posteriormente mandará a 
+llamar el método \texttt{dibuja()} que tomará el estado del tablero y las fichas 
+para actualizar su posición y dibujar una nueva versión del juego.
+
+\input{./images/uml/abejas_tetris_gui.tex}
+
+Existen tres maneras de visualizar una partida y estas dependerán del modo 
+de juego: cuando se ha terminado de realizar una ejecución de la heurística, ya sea por 
+medio de una búsqueda de semillas o una partida aleatoria, el modo interactivo 
+que espera a que las indicaciones sean introducidas desde la terminal. El último modo 
+es una forma de visualizar resultados anteriores y que sólo necesita una lista 
+de movimientos para dibujar una partida de Tetris.
+
+
+\section{Funciones y métodos adicionales}
+
+Como parte del análisis del problema se realizaron decisiones de diseño 
+que pueden ser importantes para entender el funcionamiento del sistema. 
+Algunas de estas decisiones fueron el resultado de problemas que se encontraron 
+en diseños previos como parte de la optimización o manejo funciones intrínsecas 
+del lenguaje.
+
+Algunas de las decisiones tomadas parecieran no son congruentes con 
+características del lenguaje o los patrones de diseño más usados, sino 
+que responden a la experiencia de una primera implementación en otro 
+lenguaje\footnote{Dicho proyecto fue creado en el lenguaje C y se puede ver 
+el funcionamiento y código fuente en la siguiente dirección: 
+\url{https://github.com/ricardorodab/abejas-tetris}.}.
+
+\subsection{Creación y rotaciones de las piezas}
+
+La creación de las casillas de las piezas no es generado dentro de la clase 
+\texttt{Pieza}, sino dentro del archivo \texttt{./abejas\_tetris/tetris/tipo\_pieza.py} 
+debido a que con sólo conocer el punto donde se desea colocar el objeto y su orientación, 
+es posible deducir siempre con un número constante de operaciones (a lo más tres) la 
+posición del resto de las casillas. 
+
+La única operación que realizan las casillas como parte del objeto pieza, la 
+operación de rotación, 
+tampoco se encuentra dentro de la clase sino que se delega a la función 
+\texttt{rota()} dentro del mismo archivo donde se crean. La decisión detrás de 
+separar estas funciones de la clase \texttt{Pieza} es que no se necesita información adicional 
+ni operar con los atributos del objeto para generar la acción de crear y 
+girar las casillas, generando una mayor limpieza en el código y aumentando una 
+velocidad mayor al no depender del estado de las casillas previas de una pieza al 
+girar sino de operaciones constantes.
+
+\subsection{Archivo de parámetros globales}
+
+Dentro del archivo \texttt{./etc/config.cfg} existen variables globales que se 
+usan para la ejecución del proyecto y dentro de éste se pueden colocar 
+parámetros de la colmena como su tamaño, las deltas de las abejas observadoras, 
+el límite de veces que una abeja trabaja sobre una fuente específica así como 
+parámetros del juego de Tetris como el alto y ancho del tablero.
+
+Todos estos valores son de vital importancia durante la ejecución de 
+la heurística y el menor cambio de éstos, produce una salida de diferente calidad.
+
+Para poder instanciar un objeto de algunas clases del proyecto 
+es necesario haber obtenido los parámetros que se encuentran dentro 
+del archivo con la función \texttt{get\_config()} que se encuentra en la ruta  
+\texttt{./abejas\_tetris/parse\_config.py}. 
+
+La creación de un archivo de parámetros independientes responde a la necesidad 
+de experimentar con los distintos pesos que se les da a los valores de 
+ejecución del programa.
+
+
+\subsection{Generador de números aleatorios}
+
+Debido a la naturaleza de las heurísticas y el proyecto, en muchas partes partes 
+del código se pueden observar que se utilizan funciones como \texttt{get\_random()}, 
+\texttt{get\_randrange()} y \texttt{get\_randbits()}. Debido a que durante la experimentación 
+es deseable poder mantener un control sobre los resultados, se usan lo 
+que se conocen como \textit{semillas generadoras de números pseudoaletorios} para 
+asegurar que el programa sea replicable. 
+Para forzar sólo un objeto que genere 
+los números aleatorios, se usa el patrón de diseño conocido como
+\textit{singleton}, para solicitar sólo un generador que funcione a la vez con sólo 
+una semilla.
+
+Para colocar una semilla se usa una función llamada \texttt{set\_random()} que 
+recibe como parámetro la semilla como un número entero. 
+Junto este método se escribió un algoritmo que tiene como propósito el 
+hacer búsqueda de semillas generadoras con resultados favorables 
+que obtengan buenas partidas de Tetris. Para realizar la búsqueda se debe colocar 
+la constante \texttt{-1} en la variable \texttt{SEMILLA} dentro del archivo 
+de parámetros globales, colocar el número de semillas que se desean probar 
+en la variable \texttt{SEMILLA\_ITERA} y correr el \textit{script} 
+\texttt{./scripts/llena-semillero.sh} que se encarga de crear el archivo con las 
+semillas aleatorias.
+
+\subsection{Constantes}
+
+Existen para este sistema valores constantes que no se desean cambiar como 
+son el color de los tipos de las distintas piezas, el tamaño de los bloques o 
+el tamaño de los márgenes. Además de ser un buen diseño y agregarle legibilidad al 
+código, se tomó la decisión de crear un archivo autónomo ya que estos valores son 
+completamente independientes de la ejecución de la heurística y del juego. Los 
+valores constantes dentro del proyecto se usan para la visualización de los 
+resultados y son propios de la biblioteca \textit{pygame}.
+
+Si por alguna razón se desearan cambiar los valores constantes, todos se mantienen 
+en la ruta \texttt{./abejas\_tetris/constantes.py}. La constante \texttt{ESCALADO}, 
+es la responsable del tamaño de los objetos de visualización por lo que si se modificara, 
+la interfaz gráfica se vería afectada haciendo que su visualización sea de menor o mayor tamaño.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../main"
+%%% End:

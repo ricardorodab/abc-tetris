@@ -1,0 +1,87 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+
+\begin{umlpackage}[x=0 ,y=0]{abc}
+
+\umlclass[x=-4, y=1,scale=0.5]{Abeja}{
+- \_tipo : Tipo\_Abeja \\
+- \_id : int \\
+- \_fuente : <T> \\
+- \_limite : int \\
+- \_delta : float \\
+- \_busca\_fuente : $T \rightarrow T$ \\
+- \_observadoras: $T \times float \rightarrow T$ \\
+- \_nectar: $T \rightarrow float$ \\
+- \_explotar: $T \rightarrow T$
+}{
++ \_\_init\_\_(tipo : Tipo\_Abeja, id : int, delta : float) : Abeja \\
++ asigna\_funciones(**kwargs : list<function>) : void \\
++ get\_tipo() : Tipo\_Abeja \\
++ set\_tipo(tipo : Tipo\_Abeja) : void \\
++ get\_id() : int \\
++ set\_fuente(fuente : T) : void \\
++ get\_fuente() : T \\
++ observa\_solucion() : T \\
++ explota\_fuente() : T \\ 
++ busca\_fuente() : T \\
++ get\_nectar() : floar \\
++ get\_limite() : int \\
++ incrementa\_iteracion() : void \\
++ \_\_eq\_\_(other : Object) : bool \\
++ \_\_ne\_\_(other : Object) : bool \\
++ \_\_hash\_\_() : int
+}
+
+\umlclass[x=3, y=0,scale=0.5]{Colmena}{
+- \_size : int \\
+- \_fuente\_ini : <T> \\
+- \_abejas : dict<Abeja> \\
+- \_exploradoras : dict<Abeja> \\
+- \_observadoras : dict<Abeja> \\
+- \_empleadas : dict<Abeja> \\
+- \_fuente\_abeja : dict<int> \\
+- \_limite : int \\
+- \_fuentes : dict<T> \\
+- \_suma\_fuentes : float \\
+- \_delta\_observacion : float \\
+- \_busca\_fuente : $T \rightarrow T$ \\
+- \_observadoras\_fun : $T \times float \rightarrow T$ \\
+- \_nectar\_fun : $T \rightarrow float$ \\
+- \_termino\_iteracion : $T \rightarrow V$ \\
+- \_explotar\_fuente\_fun : $T \rightarrow T$ \\
+- \_funcion\_comparativa : $T \rightarrow float$
+}{
++ \_\_init\_\_(size : int, fuente\_inicial : T, limite : int, delta\_obs : float) : Colmena \\
++ set\_funcion\_nectar(calcular\_nectar\_function : $T \rightarrow float$) : void \\
++ set\_funcion\_buscar\_fuente(busca\_fuente\_function : $T \rightarrow T$) : void \\
++ set\_funcion\_observacion(determina\_observacion\_function : $T \times float \rightarrow T$) : void \\
++ set\_funcion\_explotar\_fuente(explorar\_fuente : $T \rightarrow T$) : void \\
++ set\_funcion\_comparativa(funcion\_comparativa : $T \rightarrow float$) :void \\
++ set\_funcion\_termino\_iteracion(termino\_iteracion : $T \rightarrow V$) : void \\
++ actualiza\_fuente\_inicial(fuente\_inicial : T) : void \\
++ inizializa\_abejas() : void \\
++ get\_nectar\_actual() : float \\
++ itera\_colmena() : void \\
++ get\_solucion\_final() : T \\
++ get\_mejor\_solucion() : T \\
+- \_actualiza\_fuentes(fuente\_delta : T, fuente\_original : T) : void \\
+- \_rueda\_ruleta(nectar : float, factor : float) : bool \\
+- \_waggle\_dances() : void \\
+- \_asigna\_funciones(id : int) : void \\
+- \_itera\_exploradoras() : void \\
+- \_itera\_empleadas() : void \\
+- \_itera\_observadoras() : void \\
+- \_llamada\_post\_iteracion() void
+}
+
+\umlclass[x=-4, y=-3.0,type=enum,scale=0.5]{Tipo\_Abeja}{
+EMP, EXP, OBS
+}{}
+
+
+\end{umlpackage}
+
+\end{tikzpicture}
+\caption{Diagramas UML del paquete \texttt{abc}.} \label{fig:uml-abc}
+\end{figure}

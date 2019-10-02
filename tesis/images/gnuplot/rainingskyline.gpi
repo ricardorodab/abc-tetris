@@ -1,0 +1,9 @@
+set terminal latex rotate
+set output "images/rainingskyline.tex"
+set ytics 5
+set yrange [-1:5]
+set xrange [0:5000]
+set xlabel "Semillas probadas" rotate by 90
+set ylabel "Filas eliminadas"
+set style line 5 lt rgb "red" lw 3 pt 6
+plot 'images/gnuplot/rainingskyline.dat' with linespoints notitle

@@ -1,0 +1,23 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\umlclass{Abejas\_Tetris}{
++ pierde : bool \\
++ online : bool \\
++ colmena : Colmena \\
++ lista\_piezas : list<Tipo> \\
+- \_x : int \\
+- \_y : int \\
+- \_tetris : Tetris 
+}{
++ \_\_init\_\_(online : bool, size\_colmena : int, limite\_it : int \\ delta: float, alto : int, ancho : int) : Abejas\_Tetris \\ 
++ set\_lista\_piezas(piezas : list<str>) : void \\
++ init\_colmena() : void \\
++ juega\_online(iteraciones : int, limpieza : bool) : Tetris \\
++ interactivo() : void \\
++ pinta\_historia(historia : list<Movimiento>) : void \\
+$\qquad\qquad\qquad\qquad\qquad\qquad\dots$ 
+}
+\end{tikzpicture}
+\caption{Atributos y métodos de la clase \texttt{Abejas\_Tetris}.} \label{fig:uml-a-t}
+\end{figure}

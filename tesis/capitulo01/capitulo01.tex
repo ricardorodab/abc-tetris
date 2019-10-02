@@ -1,0 +1,93 @@
+\chapter{Introducción}
+
+Desde el inicio del uso de las computadoras y el uso de la \textit{Máquina de
+  Turing} como modelo de cómputo, uno de los principales objetivos ha sido el
+tratar de resolver problemas de manera automatizada. A partir de la década de
+los años cuarentas del siglo pasado y en pleno apogeo de la segunda guerra
+mundial, los programadores afrontaron la gran complicación de usar un enfoque
+para no orientar a las máquinas a calcular todos los posibles resultados sino
+disminuir el número de operaciones. Por aquella tormentosa época, matemáticos y
+criptógrafos no tuvieron opción más que reducir el espacio de búsqueda de sus
+problemas para optimizar el tiempo de ejecución de sus (muy) limitadas
+máquinas. Al reducir el espacio de búsqueda contribuyeron a encontrar soluciones
+de una manera más eficiente~\cite{GalavizCasas}.
+
+El modelo computacional que actualmente se usa puede resolver problemas
+cotidianos de manera bastante eficiente, como son mostrar la letra de una canción en
+uno de los buscadores más usado y más famoso~\cite{Harikumar}. Esta afirmación
+parte de la idea de que existen problemas que son fáciles de entender pero
+difíciles o imposibles de hacer que una computadora dé una respuesta;
+está demostrado que problemas como \textit{The Halting problem}
+\footnote{La función \texttt{HALT} toma de entrada un par $\langle \alpha, x
+\rangle$ y regresa $1$ sí y sólo si la máquina de Turing $M_{\alpha}$ se
+detiene dada la entrada $x$, en un número finito de pasos.} no pueden
+ser resueltos por una máquina de Turing.
+Existen incógnitas que pueden ser fácilmente enunciables como \textit{¿es $N$ un número
+primo?}\footnote{Problema del número compuesto.} o \textit{¿puede una persona
+recorrer $K$ lugares de forma eficiente sin repetir ninguno y al finalizar
+regresar al lugar de origen?}\footnote{Problema del agente viajero.} pero al ser programadas,
+pueden tardar años en ser solucionados por una máquina si no se les da
+herramientas correctas de resolución~\cite{arora2009computational}.
+
+Para todos aquellos problemas en los cuales crear un algoritmo y esperar
+una solución óptima no es posible, ya sea por su complejidad o porque
+simplemente no se sabe si existe un algoritmo eficiente, se usan otros métodos
+que aunque posiblemente no sean los óptimos, nos ayudan a dar soluciones que
+surgen con el objetivo de ser lo más efectivas posibles~\cite{Pearl1984}.
+Algunas de las compañías de software de uso cotidiano y masivo, empresas tan
+conocidas como de transporte\cite{uber-heuristic} o comercio electrónico
+\footnote{Conocido como \textit{e-commerce}, incluye empresas como Uber,
+Amazon, Netflix, Google, entre otras.}, han usado estas
+alternativas como recurso para mejorar su impacto en el mercado\cite{Linden} \cite{Smith2017}.
+
+Dada una problemática bien definida y que se pueda probar que exista 
+dentro de la clase de complejidad
+\textsl{NP}-completo o \textsl{NP}-duro y una heurística de optimización
+combinatoria como las definidas en ~\cite{Pearl1984}, ¿cómo comparar si la
+solución propuesta es buena?  Una forma es desarrollar la aplicación de la
+heurística al problema y analizar los resultados obtenidos. Para analizar las
+soluciones se deberá definir un objetivo a conseguir con los 
+datos de entrada y un comportamiento que encuentre una solución 
+al problema definido. De esta manera, se podría observar que los resultados son
+eficiente al menos en algún punto de la ejecución.
+
+El objetivo principal de este trabajo es tomar el problema de calcular los
+posibles desenlaces de un juego de Tetris y seleccionar una serie de
+movimientos adecuados, usando una heurística de solución genérica que realice
+optimización combinatoria como la mencionada en~\cite{karaboga2005idea}.
+
+Se usará la heurística de nombre \textit{Colonia de Abejas Artificiales} como
+método de cálculo para los posibles desenlaces de cada iteración del problema.
+La heurística consiste en dividir la búsqueda de posibles soluciones óptimas
+usando la reducción del espacio con la ayuda de distintas estrategias que se
+basan en las tácticas de un ente natural: conductas como el de
+reducir el lugar geográfico de una colonia de abejas para localizar fuentes
+de alimentos y mejorar el comportamiento de un panal.
+El propósito de usar esta heurística es adaptar una función de costo que
+se desarrollará sobre el contexto del juego de Tetris.
+
+Se ha elegido como problema el juego de Tetris por las interesantes
+conclusiones que se han obtenido del trabajo
+en~\cite{DBLP:journals/corr/cs-CC-0210020} y por
+la familiaridad que presenta para una gran cantidad de personas, por lo que
+entender sus reglas y lógica no conlleva un reto mayor al del propósito del
+presente trabajo. Los objetivos a optimizar por la heurística son: maximizar
+el número de filas eliminadass mientras la computadora juega; maximizar el
+número de piezas colocadas al finalizar el juego; maximizar el número de veces
+que se realiza un ``tetris'' (que es cuando se eliminan simultáneamente cuatro
+líneas); y minimizar la altura de la fila más alta en cualquier momento
+durante el juego.
+
+En el capítulo dos se hablará de diferentes tipos de problemas computacionales,
+terminando con la explicación de un problema \textsl{NP}-completo que será el
+punto de partida para explicar el problema a tratar en esta tesis;
+Tetris, que será abordado en el capítulo cuatro y la solución a usar
+será descrita en el capítulo tres. Tanto en el capítulo cinco como en el seis se
+discutirá el ambiente y la implementación del problema mientras que en el siete
+los resultados del desempeño de la solución propuesta. Para finalizar este
+trabajo, las conclusiones se presentan en el capítulo ocho.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../main"
+%%% End:

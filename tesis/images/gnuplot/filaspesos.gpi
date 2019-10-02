@@ -1,0 +1,9 @@
+set terminal latex rotate
+set output "./images/filaspesosresul.tex"
+set ytics 5
+set yrange [0:20]
+set xrange [0:1000]
+set xlabel "Semillas probadas" rotate by 90
+set ylabel "Filas eliminadas"
+set style line 5 lt rgb "red" lw 3 pt 6
+plot './images/gnuplot/filaspesos.dat' with lines title 'Filas entre pesos neg' lt rgb "violet"

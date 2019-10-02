@@ -1,0 +1,51 @@
+\definecolor{bg}{HTML}{D3D3D3}
+\definecolor{darkgreen}{rgb}{0.18,0.54,0.34}
+\definecolor{red}{rgb}{1,0,0}
+
+\tcbuselibrary{listingsutf8,minted}
+\tcbset{listing utf8=inputenc}
+
+
+\lstdefinestyle{mybash}
+{language=bash,
+keywordstyle=\color{blue},
+basicstyle=\ttfamily,
+morekeywords={peter@kbpet},
+alsoletter={:~},
+morekeywords=[2]{python},
+keywordstyle=[2]{\color{red}},
+literate=*{\$}{{{\color{red}\$}}}{1} 
+         {:}{{{\color{red}:}}}{1}
+         {\{}{{{\color{black}\{}}}{1},
+}
+
+\lstset{style=mybash}
+
+\newtcblisting{commandshell}{
+%colback=white,
+%colupper=black,
+colframe=black,
+listing only,
+listing style=mybash,
+listing options={
+	style=mybash,
+	numberstyle=\tiny\color{black}}
+}
+
+\newtcblisting{commandshellwhite}{colback=purple!5,colupper=black,colframe=purple!5,
+listing only,listing remove caption=true,listing options={language=sh, name=Listado}}
+
+\newtcblisting{pythonshell}{listing engine=minted, minted language=python,colback=white,colupper=black,colframe=white!75!black,
+listing only,listing remove caption=true,listing options={name=Listado}}
+
+\newtcblisting{pythonshellnoframe}{listing engine=minted, minted language=python,colback=white,colupper=black,colframe=white,
+listing only,listing remove caption=true,listing options={name=Listado}}
+
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\captionsetup[listing]{name=Listado}
+%every listing line={\textcolor{green}{\small\ttfamily\bfseries DeathStar \$> }
+\renewcommand\lstlistingname{Listado}
+\lstset{
+    escapeinside={(*@}{@*)},          % if you want to add LaTeX within your code
+}

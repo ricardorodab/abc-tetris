@@ -1,0 +1,188 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+
+\begin{umlpackage}[x=0 ,y=0]{tetris}
+
+\umlclass[x=-6, y=6.3,scale=0.5]{Punto}{
+- \_x : int \\
+- \_y : int
+}{
++ \_\_init\_\_(x : int, y : int) : Punto \\
++ get\_x() : int \\
++ get\_y() : int \\
++ set\_x(x : int) : void \\
++ set\_y(y : int) : void  \\
++ same(punto : Punto) : bool \\
++ clona() : Punto
+}
+
+\umlclass[x=-1, y=6.1,scale=0.5]{Casilla}{
+- \_punto : Punto \\
+- \_fija : bool \\
+- \_tipo : Tipo
+}{
++ \_\_init\_\_(punto : Punto, tipo : Tipo) : Casilla \\
++ get\_tipo() : Tipo \\
++ set\_tipo(tipo : Tipo) : void \\
++ get\_punto() : Punto \\
++ set\_punto(punto : Punto) : void  \\
++ set\_fija(fija : bool) : void \\
++ get\_fija() : bool \\
++ clona() : Casilla
+}
+
+\umlclass[x=4.5, y=5.3,scale=0.5]{Pieza}{
+- \_tipo : Tipo \\
+- \_orientacion : int \\
+- \_posicion : Punto \\
+- \_casillas : list<Casilla>
+}{
++ \_\_init\_\_(tipo : Tipo, posicion : Punto) : Pieza \\
++ get\_orientacion() : int \\
++ set\_orientacion(orientacion : int) : void \\
++ set\_puntos(puntos : list<Casilla>) : void \\
++ get\_casillas\_self() : list<Casilla> \\
++ get\_puntos() : list<Punto> \\
++ rota() : void \\
++ mueve\_derecha() : void \\
++ mueve\_izquierda() : void \\
++ baja() : void \\
++ sube() : void \\
++ fija() : bool \\
++ casillas() : list<Casilla> \\
++ get\_tipo() : Tipo \\
++ clona() : Pieza \\
+- \_\_get\_casillas() : list<Casilla>
+}
+
+\umlclass[x=-6, y=0.2,scale=0.5]{Tablero}{
+- \_x : int \\
+- \_y : int \\
+- \_pieza : Pieza \\
+- \_pieza\_anterior : Pieza \\
+- \_limpia\_automatico : bool \\
+- \_tablero : list<list<Casilla>> \\
+- \_num\_tetris : int
+}{
++ \_\_init\_\_(x : int, y : int) : Tablero \\
++ get\_casilla(x : int, y : int) : Casilla \\
++ set\_limpieza\_automatica(limpieza=True : bool) : void \\
++ get\_limpieza() : bool \\
++ copia\_tablero(tablero : list<list<Casilla>>) : void \\
++ asigna\_pieza\_anterior(pieza : Pieza) : void \\
++ asigna\_pieza\_clonada(pieza : Pieza) : void \\
++ punto\_inicial() : Punto \\
++ set\_pieza(tipo : Tipo) : bool \\
++ requiere\_pieza() : bool \\
++ altura\_maxima() : int \\
++ altura\_minima() : int \\
++ movimiento\_valido(move : Movimiento) : bool \\
++ juega\_movimiento(move) : bool \\
++ restaura\_pieza() : void \\
++ juega\_movimiento\_inverso(move : Movimiento) : bool \\
++ limpia() : void \\
++ puede\_limpiar() : bool $ \cup $ int \\
++ puede\_fijar() : bool \\
++ fijar() : bool $\cup$ void \\
++ print() : void \\
++ cuenta\_espacios(fila : int) : int \\
++ cuenta\_atrapados() : int \\
++ cuenta\_cubiertos() : int \\
++ num\_tetris() : int \\
++ set\_num\_tetris(num : int) : void \\
++ clona() : Tablero \\
+- \_cuenta\_cubiertos(x : int, y : int) : int \\
+- \_cuenta\_filas\_removidas() : void \\
+- \_\_check\_cae() : bool \\
+- \_\_check\_der() : bool \\
+- \_\_check\_izq() : bool \\
+- \_\_check\_gir() : bool \\
+- \_\_actualiza\_pieza(puntos\_viejos : list<Punto>) : void \\
+- \_\_revisa\_filas() : void \\
+- \_\_limpia(fil : int) : void 
+}
+
+\umlclass[x=-.75, y=0.2,scale=0.5]{Tetris}{
+- \_x : int \\
+- \_y : int \\
+- \_historial : list<Movimiento> \\
+- \_tablero : Tablero \\
+- \_piezas\_jugadas : int \\
+- \_game\_over : bool \\
++ id : int
+}{
++ \_\_init\_\_(x : int, y : int, tablero=None : Tablero) : Tetris \\
++ desactiva\_limpieza\_automatica() : void \\
++ activa\_limpieza\_automatica() : void \\
++ get\_altura() : int \\
++ get\_ancho() : int \\
++ set\_game\_over(flag : bool) : void \\ 
++ game\_over() : bool \\
++ set\_piezas\_jugadas(number : int) : void \\
++ altura\_maxima() : int \\
++ altura\_minima() : int \\
++ ultimo\_movimiento() : Movimiento \\
++ clona() : Tetris \\
++ set\_pieza(tipo=None : Tipo) : bool \\ 
++ puede\_fijar() : bool \\
++ mueve(move : Movimiento) : void \\
++ fija() : void \\
++ mueve\_o\_fija(move=None : Movimiento, restaura : bool) : bool \\
++ siguiente\_random(tipo=None : Tipo, move=None : Movimiento) : bool \\
++ limpia() : void \\
++ puede\_limpiar() : bool $ \cup $ int \\
++ get\_casilla(x : int, y : int) : Casilla \\
++ piezas\_jugadas() : int \\
++ set\_historial(historial : list<Movimiento>) : void \\
++ get\_historial() : list<Movimiento> \\
++ elimina\_historial(delta=1 : float) : None \\
++ num\_movimientos() : int \\
++ requiere\_pieza() : bool \\
++ imprime\_tablero() : void \\
++ movimiento\_valido(move : Movimiento) : bool \\
++ cuenta\_espacios(fila) : int \\
++ cuenta\_atrapados() : int \\
++ cuenta\_cubiertos() : int \\
++ num\_tetris() : int \\
++ \_\_eq\_\_(other : Object) : bool \\
++ \_\_ne\_\_(other : Object) : bool \\
++ \_\_hash\_\_() : int
+}
+
+\umlclass[x=5.7, y=-3,type=enum,scale=0.5]{Movimiento}{
+DER, IZQ, CAE, GIR, FIJ
+}{}
+
+\umlclass[x=3.35, y=-3,type=enum,scale=0.5]{Tipo}{
+I, RS, LG, T, RG, LS, Sq
+}{}
+
+\umlclass[x=4.5, y=0,scale=0.5]{tipo\_pieza}{}{
+\umlstatic{+ instancia\_i(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ instancia\_rs(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ instancia\_lg(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ instancia\_t(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ instancia\_rg(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ instancia\_ls(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ instancia\_sq(pos : Punto) : list<Casilla>} \\
+\umlstatic{+ get\_casillas(tipo : Tipo, posicion : Punto) : list<Casilla>} \\
+\umlstatic{+ rota\_i(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota\_rs(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota\_lg(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota\_t(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota\_rg(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota\_ls(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota\_sq(casillas : list<Casilla>) : list<Punto>} \\
+\umlstatic{+ rota(tipo : Tipo, casillas : list<Casilla>) : list<Punto>} 
+}
+
+
+\end{umlpackage}
+
+%\umlimport[geometry=|-,anchor1=0, anchor2=west, name=import]{abc}{test}
+%\umlimport[geometry=|-, name=import]{tetris}{test}
+%\umlimport[geometry=|-,anchor1=north, anchor2=90, name=import]{test}{union}
+\end{tikzpicture}
+\caption{Diagramas UML del paquete \texttt{tetris}} \label{fig:uml-tetris}
+\end{figure}

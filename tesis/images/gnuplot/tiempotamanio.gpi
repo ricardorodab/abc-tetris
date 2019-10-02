@@ -1,0 +1,8 @@
+set terminal latex rotate
+set output "images/tiempotamanio.tex"
+set ytics 100
+set xrange [0:1000]
+set yrange [0:100]
+set ylabel "Tiempo promedio de ejecución en segundos" rotate by 90
+set xlabel "Tamaño de la colmena"
+plot 'images/gnuplot/tiempotamanio.dat' with lines notitle lt rgb "violet"

@@ -1,0 +1,35 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\umlsimpleclass[x=-6, y=1]{\_\_main\_\_.py}
+\begin{umlpackage}[x=-6,y=0.7,scale=0.1, name=union]{}
+\end{umlpackage}
+
+
+\begin{umlpackage}[x=0 ,y=0]{test}
+\dots
+\end{umlpackage}
+
+\begin{umlpackage}[x=0 ,y=0]{abejas-tetris}
+
+\begin{umlpackage}[x=-3 ,y=-3]{abc}
+\dots
+\end{umlpackage}
+
+\begin{umlpackage}[x=3 ,y=3]{tetris}
+\dots
+\end{umlpackage}
+
+\umlclass[x=0, y=0]{Abejas\_Tetris}{
+$\qquad\quad\dots$
+}{
+$\qquad\quad\dots$ 
+}
+
+\end{umlpackage}
+\umlimport[geometry=|-,anchor1=0, anchor2=west, name=import]{abc}{test}
+\umlimport[geometry=|-, name=import]{tetris}{test}
+\umlimport[geometry=|-,anchor1=north, anchor2=90, name=import]{test}{union}
+\end{tikzpicture}
+\caption{Estructura básica del sistema.} \label{fig:uml-estructura}
+\end{figure}

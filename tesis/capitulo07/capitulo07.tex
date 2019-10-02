@@ -1,0 +1,555 @@
+\chapter{Experimentación y resultados}
+
+Para entender el comportamiento de la implementación al modificar los parámetros de 
+entrada, es de gran importancia analizar los resultados y conducir a la heurística 
+hacia un estado de evaluación que se considere positivo. Como consecuencia a 
+la experimentación del sistema, el ajuste de los pesos y las funciones evaluadoras se deben 
+ir refinando de tal manera que 
+al observar el movimiento de las piezas e ignorar el funcionamiento interno 
+del proyecto, un espectador podría llegar a coincidir en las decisiones tomadas 
+por la colmena. Durante este capítulo se explicarán las distintas estrategias 
+de evaluación y los resultados obtenidos de cada una de ellas.
+
+\section{Funciones de comportamiento}
+
+Como bien se mencionó, cada objeto creado desde la clase 
+\texttt{Abeja} posee cuatro atributos que tienen 
+la particularidad de ser funciones que serán llamadas por la colmena a la hora de 
+iterar sobre cada uno de los tipos de abeja. Todas las funciones, excepto la de las 
+abejas observadoras, reciben un objeto 
+de tipo \texttt{T}, que es el tipo de la fuente, la función de las abejas 
+observadoras recibe un objeto de tipo genérico \texttt{T} y un tipo \texttt{float}. 
+El tipo \texttt{T} en la implementación de este proyecto es la clase \texttt{Tetris}.
+
+La función que se almacena dentro del atributo 
+$\texttt{\_busca\_fuente}:T \rightarrow T$, 
+es usada por las abejas exploradoras y al igual que todas las funciones que poseen 
+el resto de las abejas de la colmena, tiene la característica de que el parámetro 
+\texttt{fuente} que recibe puede ser ignorado en el caso de que la función se desee 
+definir de forma independiente a algún estado anterior como es usual en las heurísticas. 
+En el caso particular del juego de Tetris, la función sí utiliza el parámetro 
+como un punto de partida de las abejas y regresa un juego de Tetris de tipo 
+\texttt{Tetris}, donde una pieza es colocada en alguna posición de forma aleatoria.
+
+En el atributo $\texttt{\_explotar}:T\rightarrow float$ se guarda la función 
+que todas las abejas empleadas usarán con la fuente que tienen asociada. 
+Cada empleada de manera aleatoria buscará colocar una pieza dentro de la solución 
+previa. Aunque es muy parecida a la función para buscar una fuente,  
+esta función es diferente a $\texttt{\_busca\_fuente()}$ porque 
+el valor regresado no es la fuente, sino la evaluación del resultado de Tetris. 
+El estado del juego sí es modificado y la partida de Tetris ``avanza'' en el tiempo.
+
+El atributo $\texttt{\_observadoras}:T \times float \rightarrow T$ posee un comportamiento 
+un poco más complejo: en primer lugar clona el objeto que recibe para evitar 
+modificar el estado de un objeto original asociado a alguna abeja empleada. Una vez teniendo 
+un objeto clon, la abeja observadora realiza 
+movimientos inversos dentro del historial reciente del juego de Tetris. En otras 
+palabras, elimina pasos que la abeja empleada o exploradora hicieron para llegar 
+al estado actual. Después de realizar los movimientos inversos, se le agrega de manera 
+aleatoria nuevos movimientos hasta llegar al punto donde la pieza vuelva a ser 
+fijada en el tablero. Las acciones de retirar movimientos y agregar nuevos puede 
+verse como \textit{alejarse} de la fuente original para conseguir una fuente 
+en una \textit{distancia} $\delta$. De vuelta en la colmena, si la solución a 
+distancia $\delta$ es mejor que la función original, la nueva fuente será la 
+localizada por la abeja observadora. Son las abejas observadoras las encargadas 
+de explorar los mínimos locales mientras que las exploradoras buscan los mínimos 
+globales.
+
+La última función es la de néctar o también llamada función de costo o 
+\textit{fitness}. Almacenada en $\texttt{\_nectar}: T \rightarrow float$, esta 
+función evaluará los juegos de Tetris y les asignará un número $n$ que entre mayor 
+sea, mejor será la cantidad de néctar y por lo tanto mejor la solución. Definir esta 
+función conlleva una complejidad un poco mayor debido al número de variables 
+que pueden influenciar en una partida de Tetris y que deben 
+ser consideradas, ya que la definición tendrá un impacto directo sobre 
+la calidad de resultados obtenidos; una función pobremente definida tendrá 
+de forma obligada resultados pobres\footnote{En el caso de Tetris, un resultado 
+pobre es considerado aquel en el que un número corto de iteraciones, lleva al estado 
+de \textit{game\_\!over}.}. 
+
+Debido que ninguna de las funciones mencionadas anteriormente están estrictamente 
+definidas para resolver Tetris, se deben realizar pruebas y analizar los 
+resultados para ajustar los parámetros que utilizan. 
+
+
+\section{Métricas de desempeño}
+
+El modo en que un jugador humano mide su desempeño jugando Tetris es generalmente usando 
+tres factores de medición: el tiempo de juego, el puntaje obtenido y el número de filas que 
+son removidas durante una partida. Para la implementación propuesta, el puntaje 
+obtenido será sustituido por el valor de la función de costo y el tiempo de 
+juego que será medido por el número de piezas colocadas en una partida. 
+
+El propósito principal a optimizar será el número total de filas que son removidas 
+por la colmena durante una partida completa de Tetris. Al optimizar las filas 
+removidas, también hará posible que se incremente la función de costo y el número 
+de casillas no ocupadas por fichas, aumentando el número de piezas que se puedan 
+colocar en el tablero.
+
+Existe en muchas versiones de Tetris modernos un modo de juego llamado 
+\textit{40 lines} que consiste en remover 40 filas de una partida de Tetris 
+para considerar que el jugador haya ganado~\cite{line-tetris}. En este trabajo, nos 
+limitaremos a conseguir la mitad para considerar un historial de movimientos 
+buenos dado una lista de fichas.
+
+El número de piezas jugadas también se usa como una métrica para afirmar 
+que un tablero es mejor sobre otro. Si ambos tableros generan la remoción 
+de quince filas pero un tablero juega 20 piezas más que el otro, significa 
+que las piezas presentan un mayor nivel de horizontalidad y por lo tanto existe 
+una probabilidad mayor de que el tablero con mayor número de piezas pueda 
+desaparecer una fila o al menos obtenga más tiempo de juego.
+
+Las fichas a jugar deben ser generadas a partir del un programa en \emph{script}
+que se encuentra en el archivo \texttt{./scripts/lista-fichas.sh}. El programa
+generará un archivo en formato \texttt{.csv} que tendrá mil fichas aleatorias en
+su representación de forma de cadena. Se debe correr el \emph{script} cada vez que se
+desee generar una nueva combinación de fichas.
+
+\section{Funciones de costo}
+
+Como se ha explicado a lo largo de este trabajo, la función de costo tiene un 
+gran impacto sobre los resultados que las heurísticas obtienen. Desafortunadamente 
+son muchas las variables que influyen en una partida de Tetris que hay que 
+considerar, tanto valores positivos como negativos que generan una calificación 
+en el tablero. 
+
+Para ejemplificar cómo una función de costo puede impactar directamente al juego, 
+se puede suponer que existe $T$ un tablero vacío, $f_{1}$ y $f_{2}$ funciones definidas 
+de la siguiente manera:
+
+\begin{displaymath}
+  \begin{array}{rcl}
+    f_{1}: T & \rightarrow & float \\
+    f_{2}: T & \rightarrow & float.
+  \end{array}
+\end{displaymath}
+
+
+Para el siguiente ejemplo, se puede también suponer que las fichas a jugar por la colmena 
+poseen el siguiente orden en específico: \texttt{L = \{I, Rg, Lg, Sq, 
+I, T, Ls, Rs, I\}}.
+
+Sea $f_{1}(T)$ tal que regresa un número mayor si cada pieza $P_{i}$ se 
+encuentra inmediatamente a la derecha de cada pieza $P_{i-1}$. Si no existe 
+lugar a la derecha debido a que la pieza $P_{i-1}$ está en el límite derecho del tablero, 
+entonces las abejas considerarán una mejor solución el colocar la pieza  
+en el extremo superior izquierdo. En la \cref{fig:mal-juego} se puede observar que 
+la función no indica a las abejas que dejar casillas vacías entre niveles inferiores 
+y superiores afecta negativamente a la partida. Si existen demasiadas casillas vacías, 
+con un número bajo de piezas la probabilidad de perder crece de manera rápida. 
+
+\input{./images/mal-juego.tex}
+
+La función $f_{2}(T)$ se define de tal forma que si el tablero $T$ se encuentra 
+vacío, se coloca la primera pieza en la posición más cercana al borde izquierdo. 
+Si el tablero no está vacío entonces existe una casilla superior $h$ y el resultado 
+de la función es mayor si la siguiente ficha colocada no supera dicho límite y 
+se intentan llenar todas las casillas por debajo de $h$, dándole un peso mayor 
+a las que se encuentren más cercanas al borde inferior y más cercanas al borde izquierdo.
+
+\input{./images/medio-juego.tex}
+
+Como se puede observar en la \cref{fig:medio-juego}, para la instancia de fichas 
+\texttt{L} existen dos filas completamente llenas al finalizar la última 
+iteración por lo que las casillas en dichas filas serían removidas y el 
+propósito principal de la heurística que es jugar por más tiempo y eliminar el 
+mayor número de filas se incrementaría. 
+
+Aunque pareciera que la segunda función es mejor que la primera, el valor final 
+de la heurística cambia si las fichas que contiene \texttt{L} fueran  
+\texttt{L = \{I, I, Sq, Sq, Sq, Sq\}}. El resultado de la función $f_{1}(T)$ y 
+$f_{2}(T)$ se pueden ver respectivamente en la \cref{fig:mal-juego-dos} 
+y \cref{fig:medio-juego-dos}. Se observa que incluso con una función 
+generadora de néctar que se considere no genere tan buenos resultados, como lo 
+es $f_{1}$, con la entrada correcta puede funcionar mejor que otra función que genere 
+mejores resultados con un conjunto mayor de valores de entrada.
+
+\input{./images/mal-juego-dos.tex}
+
+\input{./images/medio-juego-dos.tex}
+
+\subsection{Filas entre pesos negativos}
+
+La primera función de costo que pareció funcionar de una manera general
+fue una división de valores de peso positivos entre negativos. Se hicieron una 
+decena de pruebas utilizando exclusivamente un solo valor a optimizar 
+sin obtener más de tres o cuatro filas removidas por juego pero la primer 
+fórmula que se acerca al objetivo es:
+
+\begin{displaymath}
+    \frac{1 + \texttt{filas-removidas}}{\texttt{horizontalidad} + \texttt{atrapados} + \texttt{cubiertos} + \texttt{altura}} .
+\end{displaymath}
+
+Sea $y_{1}$ la altura de la casilla ocupada más arriba en el tablero y $y_{2}$ la casilla 
+más abajo, la \texttt{horizontalidad} del tablero se define como $|y_{1} - y_{2}|$. 
+Una casilla $(x,y)$ se considera \texttt{atrapada} si la casilla en la posición está vacía 
+y sus vecinos inmediatos, las casillas en las posiciones $(x + 1, y)$, 
+$(x, y + 1)$, $(x - 1, y)$ y $(x, y - 1)$ no se encuentran vacías. A diferencia de 
+las casillas atrapadas, la casilla $(x_{n}, y_{i})$ se considera \texttt{cubierta} 
+si existe una casilla ocupada en una posición $(x_{m},y_{j})$ tal que $j > i$ y $n = m$.
+
+Esta función de néctar tiene la peculiaridad de tener cuatro variables de peso negativo 
+y sólo un peso positivo, así que lo que las abejas hacen no es buscar un buen 
+tablero, sino el tablero con el menor peso negativo. Si de paso las abejas 
+encuentran una forma de eliminar filas, entonces se quedan con ese tablero. 
+La remoción de filas sube considerablemente el valor de la fuente debido a 
+que la variable \texttt{filas-removidas} es en realidad el número de filas que se 
+han quitado durante la ejecución del juego por una constante muy alta.
+
+
+\input{./images/fila-negativos.tex}
+
+Si se analiza la \cref{fig:eval-tablero} se puede observar que la suma de los pesos negativos 
+es bastante alta y su néctar no es muy bueno: 
+
+\begin{enumerate}
+\item No hay ninguna fila llena de casillas ocupadas por lo que la variable 
+\texttt{filas-removidas} es igual a cero.
+
+\item Existe una casilla atrapada entre las fichas \texttt{T, I} y \texttt{Sq2}.
+
+\item Existen siete casillas consideradas como cubiertas, seis debajo de las fichas 
+\texttt{Lg, I} más la casilla atrapada.
+
+\item La horizontalidad tiene el valor de uno ya que la casilla ocupada más abajo 
+alcanzable desde el tope del tablero tiene altura tres y la más arriba tiene 
+altura cuatro. 
+
+\item La altura total de la partida tiene el valor de cuatro.
+
+\end{enumerate}
+
+Suponiendo que todos los pesos negativos son multiplicados por peso uno, nos queda 
+el siguiente valor del néctar de la fuente:
+
+\begin{displaymath}
+    \frac{1 + \texttt{0}}{\texttt{1} + \texttt{1} + \texttt{7} + \texttt{4}} = \frac{1}{13} \approx 0.077
+\end{displaymath}
+
+\input{./images/eval-tablero.tex}
+
+Un valor más aceptable por esta función de néctar sería el tablero de la 
+\cref{fig:eval-tablero-dos} donde podemos observar que existen dos filas 
+completamente llenas, lo que eleva el valor de la variable \texttt{filas-removidas} a 
+$2 \times c$ donde $c$ es un peso constante. No se observan espacios entre las 
+casillas ocupadas por lo que $\texttt{atrapados} = \texttt{cubiertos} = 0$. La 
+altura así como el valor que mide la horizontalidad del tablero, es la misma antes 
+y después de limpiar el tablero, es decir, remover las filas no cambia los valores de  
+$\texttt{altura} = \texttt{horizontalidad} = 1$. Suponiendo una $c \geq 2$ y 
+sustituyendo $c = 2$, la fórmula final de la función queda de la siguiente manera: 
+
+\begin{displaymath}
+    \frac{1 + (2 \times c)}{1 + 0 + 0 + 1} = \frac{1 + 4}{2} = \frac{5}{2} = 2.5
+\end{displaymath}
+
+Si en la colmena existieran ambos tableros tanto de la \cref{fig:eval-tablero} 
+como de la \cref{fig:eval-tablero-dos}, las abejas observadoras escogerían ir a analizar 
+fuentes vecinas de la fuente que tiene el néctar con valor $2.5$ o mayor y se 
+mantendrían dichas fuentes con mayor probabilidad que el resto.
+
+La función es un indicador de lo bueno o malo que puede llegar a ser un tablero 
+sobre otro, sin embargo las variables que se utilizan pueden influenciar mucho 
+o muy poco sobre un tablero ya que existen casos en los que una vez que una variable 
+eleve su valor sobre la evaluación, minimice el impacto de las otras y las abejas 
+simplemente las ignoren porque su optimización no tiene gran ventaja.
+
+Las primeras pruebas muestran que la función trabaja de la forma que se creía que 
+lo haría. En la \cref{fig:filaspesosresulprim} se ve un crecimiento de filas 
+eliminadas del juego conforme las pruebas de las distintas semillas avanzan.
+
+\begin{figure}[H]
+\input{images/filaspesosresul.tex}
+\caption[short caption]{Relación de crecimiento de filas removidas por semillas usadas.}
+\label{fig:filaspesosresulprim}
+\end{figure} 
+
+
+\subsection{\textit{Raining skyline} ponderado}
+
+Una estrategia diferente es obtener el número de casillas en las que una 
+pieza puede ser colocada y tratar de optimizar ese número. Al optimizar 
+el número de casillas disponibles se garantiza que el juego le dará un 
+peso mayor de manera automática 
+a aquellos tableros en los que existan menos piezas; en otras palabras, 
+la heurística con esta función de costo entregará una mejor evaluación 
+a aquellos tablero en los que se remueven filas. A continuación se enuncia 
+un ejemplo de cómo obtiene el valor del tablero esta función a la que 
+se le da el nombre de \texttt{cuenta\_descubiertos()}:
+
+
+\input{./images/tablero-promedio.tex}
+
+Sea un tablero $T$ en un tiempo $t$, donde $T$ posee al menos una pieza, 
+la evaluación de $T$ dependerá del número de casillas que posea el \textit{raining 
+skyline}\footnote{``Horizonte de lluvia'' en inglés.} de las piezas colocadas 
+en el tablero. La manera de obtener este \emph{raining 
+skyline} es tomando una línea imaginaria que pasa por todas las casillas que no tienen 
+a ninguna otra casilla ocupada arriba de ellas; en otras palabras, la línea se 
+dibuja en la frontera superior del polinomio que crean todas las columnas con su 
+casilla ocupada más alta. 
+La posición de la casilla $cas \in C_{sup}$ es la altura más alta 
+de cada columna del tablero, en caso de no existir una casilla ocupada en la columna, 
+el valor de $y$ de $cas$ es $y=0$.
+
+Al terminar de obtener todas las $cas \in C_{sup}$ de cada una de las columnas, la manera 
+de obtener la cantidad $rs$ de casillas del \emph{raining skyline} se realiza de la siguiente forma:
+
+\begin{displaymath}
+  rs = \sum_{i=1,j=1}^{ancho, alto} j \enskip | \enskip (i,j) \in C_{sup}.
+\end{displaymath} 
+ 
+Una vez obtenido el número $rs$ de casillas dentro del \emph{raining skyline}, se sabe que si 
+existen $n$ casillas totales en el tablero $T$, el número de casillas 
+fuera del \emph{raining skyline} $cf$ está dado por $cf = n - rs$. Una vez obtenido el 
+valor $cf$, se puede devolver el valor del néctar del tablero de la siguiente forma: 
+
+\begin{displaymath}
+  f(T) = \frac{cf}{n}.
+\end{displaymath} 
+
+Para obtener el mayor provecho de esta función, es necesario que la bandera de 
+configuración \texttt{LIMPIEZA} que se encuentra en archivo de configuraciones 
+globales esté desactivada (con valor \texttt{False}) debido a que si está activada 
+cada tablero eliminará piezas cada vez que se calcule el néctar y de esta forma se 
+producirá una pérdida de información al tener menos casillas en el \emph{raining skyline}.
+
+
+\input{./images/cierre-convexo.tex}
+
+En un comienzo se experimentó considerando que todas las casillas 
+tienen en principio el mismo peso pero los resultados durante la experimentación 
+no hicieron que superara a 5 el número de filas eliminadas durante la ejecución.
+Se probaron $5,000$ semillas diferentes pero usando sólo la función como se  
+definió, la experimentación mostró casos en los que incluso un tablero posee mejor 
+néctar con un menor número de filas removidas.
+
+\begin{figure}[h]
+\input{images/rainingskyline.tex}
+\caption[short caption]{Relación de crecimiento de filas eliminadas por semillas usando 
+la función de \emph{raining skyline} sin ponderar.}
+\label{fig:rainingskyline}
+\end{figure}
+
+El siguiente paso fue asignarle a cada casilla, vacía y ocupada un valor que es 
+directamente proporcional a su posición $y$ en el tablero. Este valor que le es 
+asignado tiene el propósito de indicarle a las abejas dos cosas sobre el tablero:
+
+\begin{enumerate}
+\item Entre más abajo coloquen las abejas la pieza, menor peso restarán al conjunto de piezas 
+disponibles. 
+
+\item La altura del tablero es un indicador de lo ``saludable'' que es la decisión 
+tomada. 
+\end{enumerate}
+
+La función de costo $f(x)$ entonces es redefinida de la siguiente manera para que 
+pueda considerar no sólo la altura sino también el peso de cada una de las casillas que 
+se encuentran dentro de la altura:
+
+\begin{displaymath}
+  rs = \sum_{i=1,j=1}^{ancho, alto} j \enskip | \enskip j > b \enskip \land \enskip (i,b) \in C_{sup} 
+  \end{displaymath} 
+
+  \begin{displaymath}
+    f(T) = \frac{rs}{\sum\limits_{i=1}^{alto} (ancho \times i)}.
+\end{displaymath} 
+
+
+La función ahora además de darle prioridad a tableros en los que 
+se trata de conseguir la menor área de casillas ocupadas, de estos tableros 
+se considerará mejor solución aquellos en los que las casillas que se 
+tengan que ocupar sean casillas inferiores. 
+
+Los primeros resultados de esta 
+función fueron mejores que las de su primer versión. Si bien los movimientos 
+mejoraron el tablero en función del tiempo considerablemente, lo hizo de manera 
+gradual con base a el número de semillas que se probaron como se puede ver en 
+la \cref{fig:rainingskylinenopdos}
+
+\begin{figure}[h]
+\input{images/rainingskylinedos.tex}
+\caption[short caption]{Relación de crecimiento de filas eliminadas por semillas usando 
+la función de \emph{raining skyline} con y sin ponderar las casillas.}
+\label{fig:rainingskylinenopdos}
+\end{figure} 
+
+Aunque el resultado se acerca al objetivo (20 filas eliminadas), las pruebas 
+no se acercan al resultado esperado tan rápidamente. Algunas alternativas son
+aumentar el tamaño de la colmena o la distancia que las abejas observadoras 
+recorren pero ambas opciones tienen la desventaja que el tiempo por semilla se 
+incrementa. 
+
+Se puede observar en la \cref{fig:rainingskylinenopdos} que el primer resultado 
+obtenido por la función elimina cinco filas pero pronto encuentra una semilla 
+que le genera un mejor resultado y las filas que son eliminadas caen a sólo dos. 
+Aunque la función trabaja correctamente y su valor de evaluación en efecto 
+puede llegar a ser mayor independientemente del número de filas que retira, 
+el quitar filas es el objetivo que se desea optimizar.
+
+Para solucionar el problema de la disminución de filas eliminadas, 
+lo que se hace es modificar de nuevo la función de tal manera que el obtener 
+un número mayor de filas eliminadas, impacte positivamente al resultado de 
+la evaluación. La obtención de los pesos y la fórmula para obtener el \emph{raining 
+skyline} no se desea modificar por lo que sólo agregaremos una nueva variable; 
+sea $fe$ el número de filas eliminadas en un tablero de Tetris, 
+la nueva función queda de la siguiente manera:
+
+ \begin{displaymath}
+    f(T) = \left(\frac{rs}{\sum\limits_{i=1}^{alto} (ancho \times i)}\right) \times (1 + fe).
+\end{displaymath} 
+
+Donde $rs$ no cambia su definición de la segunda versión de la función. 
+Inmediatamente al poner a prueba la nueva función, con pocas semillas se 
+observa un impacto favorable muy notable en el desempeño de la función de 
+costo. Se puede observar y comparar el resultado de esta función en la 
+\cref{fig:rainingskylinenoptres}.
+
+\begin{figure}[h]
+\input{images/rainingskylinetres.tex}
+\caption[short caption]{Relación de crecimiento de filas eliminadas por semillas usando 
+la función de \emph{raining skyline} con y sin ponderar las casillas por el número de filas eliminadas.}
+\label{fig:rainingskylinenoptres}
+\end{figure} 
+
+\subsection{Función híbrida}
+
+Se ha creado una tercera función de evaluación que no es 
+más que el producto de ambas funciones previamente definidas. 
+No utiliza todos los pesos negativos sino que divide sobre el número 
+de casillas cubiertas. 
+
+\begin{displaymath}
+    f(T) = \frac{rs \times (1 + \texttt{filas\_eliminadas})}{(1 + \texttt{cubiertos})}.
+\end{displaymath} 
+
+Las pruebas realizadas con colmenas de cien, quinientos y mil abejas no mostraron un cambio significativo 
+en el comportamiento; por el contrario, los resultados de tres de las 5 pruebas 
+resultaron en resultados pobres a comparación de previos resultados con cada 
+función por lo que se descartó la función.
+
+\section{Análisis de resultados}
+
+Existen además de los resultados de la función de \textit{fitness} otros 
+factores que modifican e influyen tanto positiva como negativamente el resultado 
+de una ejecución del programa. A continuación se discuten algunos como 
+el tamaño de la colmena y la búsqueda de semillas para el generador de números pseudoaleatorio.
+
+\subsection{Tamaño de la colmena}
+
+El tamaño de la colmena tiene una gran influencia en la ejecución y su tamaño
+se mantuvo constante en los resultados anteriores: 50 abejas observadoras y 
+50 abejas exploradoras para comenzar la colmena.
+
+ Se puede observar con pocas semillas que si se incrementa el tamaño de la colmena, la calidad 
+de las soluciones también lo hace. La mayor desventaja de aumentar el tamaño de 
+la colonia es que el tiempo de ejecución por parte de la colmena también aumenta drásticamente;
+una prueba realizada en la computadora que se describe en el \cref{sec:ambiente-fisico}, 
+muestra que corriendo la función de evaluación \textit{filas entre pesos negativos} en una colmena de 
+tamaño de 100 abejas, (50 exploradoras y 50 observadoras) tardan 9.96 segundos en 
+terminar de crear un juego con seis filas removidas. Bajo las mismas condiciones pero 
+con una colonia de tamaño mil, (500 exploradoras y 500 observadoras) las abejas 
+tardan 4 minutos con 35.7 segundos, sin embargo el resultado del juego de prueba 
+eliminó 28 filas.
+
+Usando la función \emph{raining skyline} con una colmena de cien abejas, el número de 
+filas que desaparece son cinco con sólo una ejecución que toma 8.76 segundos. 
+Al elevar el número de abejas de nuevo a mil, la solución entregada es 1.3 veces 
+mejor, con un resultado de 91 piezas jugadas y 26 filas removidas. Es de nuevo el 
+tiempo de respuesta el que se eleva a 3 minutos con 34.48 segundos.
+
+De las $22,000$ semillas que se corrieron para probar el comportamiento de las 
+funciones de néctar, $15,000$ se corrieron con una colonia de 
+tamaño cien, $6,000$ con una colonia de tamaño $200$ y $1,000$ con tamaño mil. 
+El resultado de las colonias de mil sobre las de cien 
+abejas obtuvo una mejor solución por un aproximado de 490\% filas más pero el 
+tiempo de iteración sobre las semillas se incrementó en 26 veces el tiempo que llevó 
+ejecutar las colmenas de cien abejas. Este resultado de tiempo es 
+poco práctico para un juego de Tetris en tiempo real. 
+ 
+ \begin{figure}[h]
+\input{images/tiempotamanio.tex}
+\caption[short caption]{Resultado de evaluar promedios de tiempos de ejecución 
+con distintos tamaños de la colmena.}
+\label{fig:tiempotamanio}
+\end{figure} 
+
+Por último, se debe mencionar que un mayor tiempo de ejecución no es sinónimo 
+de un mal desempeño en una función; las mejores funciones deberán hacer 
+que el tablero juegue más piezas, por lo que calcular la posición de las 
+piezas siguientes llevan mayor tiempo de ejecución. Prueba de ello es la mejor solución 
+encontrada durante la experimentación, se encontró en un tiempo aproximado de 7 minutos.
+
+\subsection{Experimentación de semillas}
+
+Para cada función de evaluación de probaron al menos $10,000$ semillas diferentes 
+y se observó un comportamiento similar a la hora de experimentar con muchos 
+valores; el número de pruebas que las distintas semillas contribuían a la 
+búsqueda de un mejor tablero, se estabilizaba después de las primeras cien semillas. 
+
+Independientemente de la función usada, el número de filas removidas es mejorada 
+en el uso de las primeras 15 semillas, posteriormente hay un aumento de la 
+función de costo muy reducido y se estabiliza. En el caso de la experimentación 
+con las 10,000 semillas, ninguna función mejoró pasando la semilla $6,000$ y 
+sólo una mejoró después de la $3,500$.
+
+\subsection{Resultados de funciones}
+
+El éxito de la heurística consiste en delegar toda responsabilidad a la definición 
+de la función \textit{fitness} y debido a la naturaleza de las funciones generadoras 
+de números aleatorios, es imposible conocer con certeza, como ya se ha discutido, 
+si una función es estrictamente mejor que otra para una mayor cantidad de listas 
+de piezas de entrada. Dicho lo anterior, se tomó una muestra para comparar los resultados 
+de las dos funciones definidas en este capítulo. Lo que se busca con esta comparación 
+es mostrar de manera informal una similitud de comportamiento con base a un conjunto 
+de pruebas pequeño pero modificando los mismos parámetros para ambas funciones.
+
+Para la muestra que se tomó se consideró una colmena de 300 abejas, un límite de 
+iteración de cada fuente de 50, una distancia $\delta$ de 0.07 y los siguientes 
+pesos: 
+
+ \begin{displaymath} 
+  \begin{array}{rcl}
+    \texttt{PESO\_HORIZONTALIDAD} & = & 1 \\
+    \texttt{PESO\_ATRAPADOS} & = & 3  \\
+    \texttt{PESO\_CUBIERTOS} & = & 2  \\
+    \texttt{PESO\_FILA\_REMOVIDA} & = & 1000  \\
+    \texttt{PESO\_ALTURA} & = & 1.  
+  \end{array}
+\end{displaymath}
+
+Los resultados son mostrados en la gráfica de la \cref{fig:dosfunciones} 
+y se puede corroborar que el comportamiento de ambas funciones es muy similar. 
+
+Para colmenas muy grandes, la función de división de pesos mostró una ligera 
+mejoría tanto como en tiempo de respuesta así como en resultados obtenidos, sin 
+embargo, la \emph{raining skyline} demostró ser más eficiente en cuanto a estabilidad 
+de resultados se trata.
+
+ \begin{figure}[H]
+\input{images/dosfunciones.tex}
+\caption[short caption]{Comparación de las funciones propuestas sobre una muestra 
+y valores específicos.}
+\label{fig:dosfunciones}
+\end{figure} 
+
+
+\section{Conclusión de la evaluación}
+
+La meta fue superada rápidamente conforme el refinamiento de las funciones 
+de costo. Se consiguieron muestras mayores a las propuestas por el método 
+de juego \textit{40 lines}. 
+
+Los resultados obtenidos superaron las expectativas que se propusieron al inicio 
+del diseño y las pruebas. Dos muestras de la experimentación se pueden encontrar 
+en las direcciones \url{https://youtu.be/F-Nxjvu8fPA} y 
+\url{https://youtu.be/rjpVh7kaREY}. La primera muestra toma la función de 
+\emph{raining skyline} con 500 abejas, esta muestra supera la primera meta propuesta 
+como objetivo de la experimentación. La segunda muestra toma la función de pesos 
+y una colmena de tamaño 1000. Esta muestra supera las 70 filas eliminadas y en el 
+video se está documentando el historial de movimientos del resultado 
+con casi nueve minutos de juego.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../main"
+%%% End:

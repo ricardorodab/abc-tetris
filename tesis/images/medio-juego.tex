@@ -1,0 +1,22 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[omino/nodes/.style={shape=rectangle, rounded corners, inner sep=+0pt, minimum size=1cm-2\pgflinewidth}]
+	\path [omino={at={-1,-2}, rotate=0}][tetris=1];
+	\path [omino={at={3,1}, rotate=90}][tetris=1];
+    \path [omino={at={1,-1}, rotate=0}] [tetris=4];
+	\path [omino={at={3,0}, rotate=180}][tetris=2];	
+	\path [omino={at={0,0}, rotate=180}][tetris=6];
+	\path [omino={at={6,-2}, rotate=90}][tetris=5];
+	\path [omino={at={4,-1}, rotate=0}][tetris=3];
+	\path [omino={at={8,-2}, rotate=0}][tetris=1];
+	\path [omino={at={7,-2}, rotate=0}] [tetris=7];	
+%    \path [omino/at=0:1] [tetris=2];
+%    \path [omino/at=0:2] [tetris=3];
+%    \path [omino={at=0:3, rotate=-90, x mirror}][tetris=5];
+%    \path [omino={at={5,1}, rotate=-90}][tetris=3];
+%    \path [omino={at={5,2}, rotate=-90}][tetris=2];
+%    \path [omino={at={4,2}, x mirror}][tetris=5];
+%    \path [omino={at={1,3}}][tetris=4];
+\end{tikzpicture}
+\caption{Una función que pareciera funcionar mejor al trata de cubrir todos los espacios.} \label{fig:medio-juego}
+\end{figure}

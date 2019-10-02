@@ -1,0 +1,8 @@
+set terminal latex rotate
+set output "images/dosfunciones.tex"
+set ytics 5
+set xrange [0:1000]
+set yrange [0:35]
+set ylabel "Filas eliminadas" rotate by 90
+set xlabel "Número de pruebas"
+plot 'images/gnuplot/dosfunciones.dat' using 1:2 with lines title 'Función raining-skyline' lt rgb "violet", 'images/gnuplot/dosfunciones.dat' using 1:3 with linespoints ls 5 title 'Función de pesos pos/neg'
