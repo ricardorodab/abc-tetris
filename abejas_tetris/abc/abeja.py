@@ -155,4 +155,4 @@ class Abeja():
         """
         if not isinstance(other, Abeja):
             return NotImplemented
-        return self._id != other.get_id()
+        return not self.__eq__(other)

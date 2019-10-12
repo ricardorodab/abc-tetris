@@ -425,4 +425,4 @@ class Tetris:
         """
         if not isinstance(other, Tetris):
             return NotImplemented
-        return self.id != other.id
+        return not self.__eq__(other)
