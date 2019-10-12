@@ -5,11 +5,14 @@ __email__ = "ricardo_rodab@ciencias.unam.mx"
 
 from abejas_tetris.tetris.tablero import *
 
+ID = 1
+
 from abejas_tetris.my_random import get_random, get_randrange, get_randbits
 
 class Tetris:
     """ Representa un juego de tetris con todos sus componentes."""
     def __init__(self, x, y, tablero=None):
+        global ID
         """
         Parameters
         ----------
@@ -29,6 +32,8 @@ class Tetris:
         self._historial = []
         self._piezas_jugadas = 0
         self._game_over = False
+        self.id = ID
+        ID = ID + 1
 
     def desactiva_limpieza_automatica(self):
         """
@@ -398,3 +403,24 @@ class Tetris:
         Nos dice cuántas filas se han desaparecido hasta este punto.
         """
         return self._tablero.num_tetris()
+
+    def __hash__(self):
+        """
+        Se sobrescribe el método hash para asegurar la reproducción
+        del programa con las semillas.
+        """
+        return self.id
+
+    def __eq__(self, other):
+        """
+        Se sobrescribe el método eq para comparar tetris por id.
+        """
+        if not isinstance(other, Tetris):
+            return NotImplemented
+        return self.id == other.id
+
+    def __ne__(self, other):
+        """
+        Se sobrescribe el método ne para comparar tetris por id.
+        """
+        not self.__eq__(other)

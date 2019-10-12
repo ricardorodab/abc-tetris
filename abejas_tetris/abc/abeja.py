@@ -133,3 +133,24 @@ class Abeja():
         Incrementa en uno el límite sobre las fuentes trabajadas.
         """
         self._limite = self._limite + 1
+
+    def __hash__(self):
+        """
+        Se sobrescribe el método hash para asegurar la reproducción
+        del programa con las semillas.
+        """
+        return self._id
+
+    def __eq__(self, other):
+        """
+        Se sobrescribe el método eq para comparar tetris por id.
+        """
+        if not isinstance(other, Abeja):
+            return NotImplemented
+        return self._id == other.get_id()
+
+    def __ne__(self, other):
+        """
+        Se sobrescribe el método ne para comparar tetris por id.
+        """
+        not self.__eq__(other)
