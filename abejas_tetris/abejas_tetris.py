@@ -228,16 +228,10 @@ class Abejas_Tetris():
         while len(moves) > 0:
             move = moves.pop(0)
             if move == Movimiento.FIJ:
-                if not self._tetris.puede_fijar():
-                    print("NO!")
-                    exit(0)
                 self._tetris.fija()
                 tipo = self.lista_piezas[self._tetris.piezas_jugadas()]
                 self._tetris.set_pieza(tipo=tipo)
             else:
-                if not self._tetris.movimiento_valido(move):
-                    print("NO!")
-                    exit(0)
                 self._tetris.mueve(move=move)
             self.dibuja()
             time.sleep(0.05)

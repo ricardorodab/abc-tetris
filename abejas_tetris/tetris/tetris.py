@@ -32,7 +32,7 @@ class Tetris:
         self._historial = []
         self._piezas_jugadas = 0
         self._game_over = False
-        self.id = ID
+        self.id = ID + 1
         ID = ID + 1
 
     def desactiva_limpieza_automatica(self):
