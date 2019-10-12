@@ -423,4 +423,6 @@ class Tetris:
         """
         Se sobrescribe el método ne para comparar tetris por id.
         """
-        not self.__eq__(other)
+        if not isinstance(other, Tetris):
+            return NotImplemented
+        return self.id != other.id

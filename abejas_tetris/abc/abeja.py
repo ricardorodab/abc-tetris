@@ -153,4 +153,6 @@ class Abeja():
         """
         Se sobrescribe el método ne para comparar tetris por id.
         """
-        not self.__eq__(other)
+        if not isinstance(other, Abeja):
+            return NotImplemented
+        return self._id != other.get_id()
