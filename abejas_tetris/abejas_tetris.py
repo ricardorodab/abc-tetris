@@ -240,7 +240,7 @@ class Abejas_Tetris():
                     exit(0)
                 self._tetris.mueve(move=move)
             self.dibuja()
-            time.sleep(0.005)
+            time.sleep(0.05)
         print('###### NECTAR ######')
         print(funcion_nectar_online(self._tetris))
         print('###### FILAS ELIMINADAS #####')
