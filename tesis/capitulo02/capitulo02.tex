@@ -1,9 +1,9 @@
 \chapter{Problemas \textsl{NP}-completos y \textsl{NP}-duros}
 
-Aunque el término de computación ha existido por cientos 
-de años, no fue sino hasta que su significado cambió de \textit{una persona que 
-realiza cálculos siguiendo ciertas reglas} a lo que se le conoce hoy en día, 
-que hizo necesario generar una clasificación de problemas a calcular. 
+
+Si bien la palabra \textit{computación} ha existido por cientos 
+de años, fue hasta que su significado cambió 
+que hizo necesario generar una clasificación de problemas. 
 Se mostrará que la clasificación por clases de problemas fue una consecuencia 
 natural temprana y se enuncian las definiciones de dichas clases.
 
@@ -21,18 +21,18 @@ no existe el \emph{ignorabimus}\footnote{La palabra \textit{ignorabimus} a la qu
 Hilbert hace referencia, tiene origen en un latinismo que dice
 \textit{Ignoramus et ignorabimus} y significa  ``desconocemos y
 desconoceremos''.}]~\cite{Grattan-Guinness}. Veintiocho años más tarde y aunque
-Hilbert no lo incluyó en su lista de veintitrés problema originales, enunció
+Hilbert no lo incluyó en su lista de veintitrés problemas originales, enunció
 otro para la comunidad matemática: crear un algoritmo que tome como entrada
 un predicado (con un número finito de axiomas y enunciados) y regrese como
 resultado ``Sí'' o ``No'' si es universalmente válido. Este problema es conocido
 como el \textit{Entscheidungsproblem} o el problema de
 decisión~\cite{hilbert1950principles}. En otras palabras, el problema de
 decisión consiste en averiguar si existe un algoritmo genérico que decida
-si un problema matemático tiene o no demostración.
+si una fórmula de cálculo de primer orden es un teorema.
 
 En el año 1936, el matemático Alan Turing publicó un artículo que
 revolucionó e impactó al mundo y a las matemáticas; de nombre \textit{
-Sobre los números computables, con una aplicación al Entscheidungsproblem}
+Sobre los números computables, con una aplicación al problema de decisión}
 \footnote{El título original es \textit{On computable numbers, with an
 application to the Entscheidungsproblem}.}; en este trabajo Turing
 definió \textit{una máquina de cómputo} después denominada como \textit{
@@ -49,9 +49,9 @@ la cual usa un conjunto predefinido de reglas para determinar el resultado de
 un conjunto de variables de entrada\footnote{\cite{gurovich2015introduccion}
 define formalmente a una máquina de Turing como un 7-tuplo $M=(Q,\Sigma, \Gamma,
 \delta, q_{0}, \square,F)$.}. La máquina de cómputo universal o \textit{Máquina
-de Turing universal} es una máquina que puede computar cualquier secuencia
-computable dada una descripción de una máquina $M$. La máquina universal $U(M)$
-puede realizar exactamente los mismos cómputos de $M$.
+de Turing universal} es una máquina que puede calcular cualquier secuencia
+computable dada una descripción de una máquina de Turing $M$. La máquina universal $U(M)$
+puede realizar exactamente los mismos cálculos de $M$.
 
 En ese mismo artículo Alan Turing, además de plantear el \emph{Entscheidungsproblem}
 usando su máquina de Turing y la máquina universal para demostrar que el
@@ -88,8 +88,8 @@ las definiciones formales de \textsl{P}, \textsl{NP}, \textsl{NP}-completo y
 dificultad de los cálculos que realizan las máquinas para encontrar soluciones
 de algoritmos no triviales: suponer que existe un gran grupo de estudiantes
 en los que se necesita que trabajen en equipo para un proyecto, se sabe qué
-estudiantes son compatibles entre sí y se desea colocar a los estudiantes en
-equipos compatibles. Es deseable que los equipos sean con la menor cantidad de
+estudiantes se llevan bien entre sí y se desea colocar a los estudiantes en
+equipos en los que todos se lleven bien. Es deseable que los equipos sean con la menor cantidad de
 integrantes, dos de ser posible y así todos los estudiantes realicen alguna
 parte del proyecto. Una forma de encontrar la solución sería calcular todos los
 posibles equipos y descartar los que tienen personas que no se lleven 
@@ -100,8 +100,10 @@ del conjunto potencia de estudiantes). Este programa se le llama \textit{Mínimo
 Edmonds describió un algoritmo eficiente para resolver el problema de
 emparejamiento y sugirió una definición formal de \textit{eficiencia
   computacional} \cite{Mathematics}. La clase de problemas con soluciones
-eficientes sería luego renombrada como la clase \textsl{P}\footnote{Viene del
-  inglés \textit{Polynomial Time} que significa tiempo polinomial.}.
+eficientes (o polinomiales) sería luego renombrada como la clase \textsl{P}\footnote{Viene del
+  inglés \textit{Polynomial Time}.}. En 1960 Jack Edmonds dijó que un problema es fácil 
+  de resolver si el tiempo está limitado por un polinomio en el tamaño de su representación 
+  (en la clase \textsl{P})~\cite{Schrijverpolyhedralcombinatorics}.
 
 Para muchos problemas parecidos y relacionados no se conoce un algoritmo
 eficiente que pueda resolverlos: regresando al ejemplo de los estudiantes, ¿cuál
@@ -123,8 +125,9 @@ determinista a un problema en específico. El concepto
 vez en~\cite{Cook}.
 En la demostración del trabajo Cook-Levin, los autores muestran el
 \textit{Problema de satisfacibilidad booleana}, también conocido como
-\texttt{\textbf{SAT}}, como el primer problema \textsl{NP}-completo.
-\texttt{SAT} consiste en determinar si una fórmula booleana es o
+\texttt{\textbf{SAT}}, como el primer problema \textsl{NP}-completo (aunque posteriormente 
+demuestran otros como \textbf{3-SAT}).
+\texttt{SAT} consiste en determinar si una fórmula booleana con variables y sin cuantificadores es o
 no satisfacible; en otras palabras, si existe
 alguna asignación de valores para sus variables que haga a la expresión
 verdadera.
@@ -133,7 +136,7 @@ Formalmente se dice que si $\varphi$ es una fórmula booleana con
 variables $u_{1}, u_{2}, \ldots, u_{n}$ y $z \in \{0,1\}^{n}$, entonces
 $\varphi(z)$ denota el valor de $\varphi$ cuando a las variables de $\varphi$
 le son asignados los valores de $z$. Una fórmula $\varphi$ es satisfacible si
-existe una asignación $z$ tal que $\varphi(z)$ sea \texttt{TRUE}. Si no existe
+existe una asignación $z$ tal que $\varphi(z)$ sea verdadera. Si no existe
 $z$ para $\varphi(z) = \texttt{TRUE}$, se dice que $\varphi$ es
 insatisfacible~\cite{arora2009computational}. Sólo un año después de la
 demostración, en su artículo \textit{Reducibility Among Combinatorial Problems} el computólogo
@@ -145,55 +148,72 @@ se necesita conocer al menos tres definiciones relacionadas previamente:
 lenguaje decidible, la clase \texttt{DTIME} y reductibilidad. Las siguientes
 siete definiciones formales son tomadas de~\cite{arora2009computational}:
 
-\begin{enumerate}
- \item
+
+
+\theoremstyle{definition}
+ \begin{definition}
   Se dice que una máquina decide un lenguaje $L \subseteq \{0, 1\}^{*}$ si
  calcula la función $f_{L}:\{0,1\}^{*} \longrightarrow \{0,1\}$, donde
  $f_{L} (x) = 1 \Leftrightarrow x \in L$.
+\end{definition}
 
- \item
+ \theoremstyle{definition}
+ \begin{definition}
   Sea $T: \mathbb{N} \longrightarrow \mathbb{N}$
  alguna función. Un lenguaje \textsl{L} es elemento de \texttt{DTIME}$(T(n))$ si y sólo
  si existe alguna máquina de Turing que corra en tiempo $c \cdot T(n)$ para alguna
  constante $c > 0$ y que decida $L$.
+ \end{definition}
 
- \item
+ \theoremstyle{definition}
+ \begin{definition}
 Un lenguaje $L \subseteq \{0,1\}^{*}$ es polinonialmente \textbf{reducible} a
 un lenguaje $L' \subseteq \{0,1\}^{*}$ (también llamado
 \textit{Karp reducible}), denotado por $L \leq_{p} L'$, si existe una
 función computable en tiempo polinomial
 $f : \{0,1\}^{*} \longrightarrow \{0,1\}^{*}$ tal que para cada
 $x \in \{0,1\}^{*}$, $x \in L$ si y sólo si $f(x) \in L'$.
-\end{enumerate}
+ \end{definition}
 
 \noindent
-Dada las definiciones anteriores y el ejemplo mencionado, se pueden enunciar las
+Dadas las definiciones anteriores y el ejemplo mencionado, se pueden enunciar las
 definiciones formales de las clases \textsl{P} y \textsl{NP} y el resto de las
 clases de complejidad:
 
-\begin{enumerate}
-  \setcounter{enumi}{3}
+ %theoremstyle{definition}
+ %begin{definition}
+  %setcounter{enumi}{3}
 
-\item Se define a la clase \textsl{P} como
+ \theoremstyle{definition}
+ \begin{definition}
+ Se define a la clase \textsl{P} como
   $\textsl{P} = \cup_{c \geq 1} ~ \texttt{DTIME}(n^{c})$.
+   \end{definition}
 
-\item Un lenguaje $L \subseteq \{0, 1\}^{*}$ está en \textsl{NP} si existe un
-  polinomio $p: \mathbb{N} \longrightarrow \mathbb{N}$ y una máquina de Turing
-  que se ejecute en tiempo polinomial $M$ (llamada la verificadora de $L$) tal
+ \theoremstyle{definition}
+ \begin{definition}
+Un lenguaje $L \subseteq \{0, 1\}^{*}$ está en \textsl{NP} si existe un
+  polinomio $p: \mathbb{N} \longrightarrow \mathbb{N}$ y una máquina de Turing $M$
+  que se ejecute en tiempo polinomial (llamada la verificadora de $L$) tal
   que para cada $x \in \{0,1\}^{*}$,
+\end{definition}
 
   \begin{displaymath}
     x \in L \Leftrightarrow \exists u \in \{0,1\}^{p(|x|)},~
     \textrm{tal que} ~ M(x,u) = 1.
   \end{displaymath}
 
-\item Se dice que $L'$ es \textsl{NP}-duro o \textsl{NP}-duro si
+ \theoremstyle{definition}
+ \begin{definition}
+  Se dice que $L'$ es \textsl{NP}-duro o \textsl{NP}-\textit{hard} si
   $L \leq_{p} L'$ para cada $L \in \textsl{NP} $.
+  \end{definition}
 
-\item Se dice que $L'$ es \textsl{NP}-completo si $L'$ es \textsl{NP}-duro y
+ \theoremstyle{definition}
+ \begin{definition}
+ Se dice que $L'$ es \textsl{NP}-completo si $L'$ es \textsl{NP}-duro y
   $L' \in \textsl{NP}$.
-
-\end{enumerate}
+    \end{definition}
 
 
 
@@ -214,16 +234,16 @@ s(a)=b$? En otras palabras, dado un conjunto de $N$ elementos,
 elementos de cada uno debe ser la misma y la cardinalidad de cada subconjunto
 debe ser tres?
 
-La definición de 3-partición (o \texttt{3-PARTITION}), junto con la demostración
+La definición de 3-partición junto con la demostración
 de su \mbox{\textsl{NP}-completez} apareció en el año de 1979 y es visto como
 un problema de decisión~\cite{Garey:1990:CIG:574848}. Para la demostración de la
 \textsl{NP}-completez del problema se usa una reducción del problema de la
 4-partición, el cual es \textsl{NP}-completo y previamente demostrado a partir
 del problema general de la partición
-(\cref{fig:secuenciaNP}). \texttt{3-PARTITION} es un problema de los llamados
+(\Cref{fig:secuenciaNP}). 3-partición es un problema de los llamados
 \textit{totalmente o fuertemente \textsl{NP}-completos}, esto quiere decir que
 sigue siendo \textsl{NP}-completo incluso cuando los enteros (o elementos) de
-$\mathcal{A}$ están acotados por un polinomio en $N$.
+$\mathcal{A}$ están acotados por un polinomio en función de la longitud de la entrada.
 
 \begin{figure}[h]
 \centering

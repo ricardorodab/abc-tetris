@@ -4,15 +4,14 @@ __author__ = "José Ricardo Rodríguez Abreu"
 __email__ = "ricardo_rodab@ciencias.unam.mx"
 
 from abejas_tetris.tetris.tablero import *
+from abejas_tetris.tetris.indexer import *
 
-ID = 1
 
 from abejas_tetris.my_random import get_random, get_randrange, get_randbits
 
 class Tetris:
     """ Representa un juego de tetris con todos sus componentes."""
     def __init__(self, x, y, tablero=None):
-        global ID
         """
         Parameters
         ----------
@@ -32,8 +31,7 @@ class Tetris:
         self._historial = []
         self._piezas_jugadas = 0
         self._game_over = False
-        self.id = ID + 1
-        ID = ID + 1
+        self.id = get_index()
 
     def desactiva_limpieza_automatica(self):
         """

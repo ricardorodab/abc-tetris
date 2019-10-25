@@ -8,7 +8,7 @@ __email__ = "ricardo_rodab@ciencias.unam.mx"
 # Modificar si se desea hacer más grande o más chica la inferfaz:
 # El valor debe ser un entero mayor o igual a 1.
 
-ESCALADO=2
+ESCALADO=1
 
 # TAMAÑO DE TABLERO:
 

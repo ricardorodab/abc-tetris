@@ -6,7 +6,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{vmargin}
 \usepackage{enumitem}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{pdfpages}
 \usepackage[nottoc]{tocbibind}
 \usepackage{textcomp}
@@ -39,6 +39,7 @@
 \usepackage{lineno}
 \usepackage{parcolumns}
 \usepackage{fancyhdr}
+\usepackage[multiple]{footmisc}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\rightmark}
@@ -46,13 +47,17 @@
 \renewcommand{\headrulewidth}{0pt}
 
 % Cosas que hay que quitar:
-\linenumbers
-\usepackage{draftwatermark}
-\SetWatermarkText{VERSIÓN SINODALES}
-\SetWatermarkHorCenter{0.6\paperwidth}
-\SetWatermarkVerCenter{0.56\paperheight}
-\SetWatermarkScale{2}
+%\linenumbers
+%\usepackage{draftwatermark}
+%\SetWatermarkText{VERSIÓN SINODALES}
+%\SetWatermarkHorCenter{0.6\paperwidth}
+%\SetWatermarkVerCenter{0.56\paperheight}
+%\SetWatermarkScale{2}
 % Ya no hay que quitar nada
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definición}[section]
 
 \newcolumntype{C}{>$c<$}
 

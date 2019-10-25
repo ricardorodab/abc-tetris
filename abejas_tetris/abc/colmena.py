@@ -158,11 +158,8 @@ class Colmena():
         """
         self._suma_fuentes = 0
         self._itera_exploradoras()
-        for i in self._fuentes:
-            self._termino_iteracion(i)
+        self._llamada_post_iteracion()
         self._itera_empleadas()
-        #for i in self._fuentes:
-        #    self._termino_iteracion(i)
         self._itera_observadoras()
         self.actualiza_fuente_inicial(self.get_mejor_solucion())
         self._llamada_post_iteracion()
@@ -271,6 +268,8 @@ class Colmena():
         # la exploración local mejora el resultado.
         for id in self._observadoras:
             abja = self._observadoras[id]
+            if abja.get_fuente() is None:
+                continue
             fuente_delta = abja.observa_solucion()
             nectar_delta = self._nectar_fun(fuente_delta)
             nectar_original = self._fuentes[abja.get_fuente()]
@@ -329,7 +328,7 @@ class Colmena():
         for i in self._observadoras:
             abja_obs = self._observadoras[i]
             if not (abja_obs.get_fuente() in self._fuentes):
-                abja_obs.set_fuente(fuente_delta)
+                abja_obs.set_fuente(None)
 
     # Actualiza las fuentes si se requiere de alguna operación posterior.
     def _llamada_post_iteracion(self):

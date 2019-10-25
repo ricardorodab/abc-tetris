@@ -24,7 +24,7 @@ ha descrito estos procesos a una computadora:
   cada producto y un número $N$ el cual representa el límite de gastos.
 
 \item \textbf{Output:} Un valor booleano de \texttt{TRUE} si la suma de los
-  valores del carrito es menor a el número $N$, \texttt{FALSE} en caso
+  valores del carrito es menor o igual al número $N$, \texttt{FALSE} en caso
   contrario.
 
 \end{itemize}
@@ -75,16 +75,16 @@ números primos menores a un número natural $m$ dado.
 
 Para propósitos de esta tesis, la definición informal que se usará será la
 siguiente: \textbf{Un algoritmo es una secuencia de pasos bien definida y finita
-  tal que dado una entrada $I$, produce siempre la salida $O$}. Se considerará
+  tal que dada una entrada $I$, produce siempre la salida $O$}. Se considerará
 que los algoritmos deben tener también la característica de finitud
 (\cite{Physics},~\cite{Rogers1967}~y~\cite{Cormen}).
 
 Así como existen problemas en los que escribir el algoritmo para encontrar
 la solución resulta sencillo y el proceso descrito pueda verse fácilmente
-eficiente (como el~\cref{code:algoritmo}), existen problemas en los que
+eficiente (como el~\Cref{code:algoritmo}), existen problemas en los que
 dar la descripción para obtener la mejor solución no es una opción práctica.
 
-\subsection{\texttt{3SAT}}
+\subsection{\texttt{3-SAT}}
 
 Sea el problema \texttt{3SAT}, el cual consiste en dado un conjunto de fórmulas
 $\phi = \{x_{1}, x_{2}, x_{3}, ..., x_{n}\}$ con cada $x_{i}$ una fórmula lógica
@@ -99,9 +99,9 @@ forma $O(X^{n})$ con $3|\phi| = n$ y $X$ una constante~\cite{Marques-Silva}.
 Para propósitos demostrativos, se ha creado un algoritmo de búsqueda exhaustiva.
 El código que se encuentra en el \cref{apendice:sat} sirve para correr
 ejemplos de fórmulas y encontrar interpretaciones en las que el valor de
-verdad de la fórmula sea \texttt{TRUE} (o~1). En caso de no exista una
-interpretación verdadera, el programa regresa el mensaje de que no se pudo
-realizar una asignación:
+verdad de la fórmula sea \texttt{TRUE} (o~1). En caso de que no exista una
+interpretación verdadera, el programa implementado regresa el mensaje de que no se pudo
+realizar una asignación (lo que sería equivalente al valor de \texttt{FALSE} en \texttt{3-SAT}):
 
 \begin{figure}[h]
 \begin{displaymath} 
@@ -117,16 +117,16 @@ realizar una asignación:
 \label{fig:salida1}
 \end{figure} 
 
-Se puede ver que $\mathcal{I}(\phi) = 1$ con la asignación de la \cref{fig:salida1} 
+Se puede ver que $\mathcal{I}(\phi) = 1$ con la asignación de la \Cref{fig:salida1} 
 ya que $\mathcal{I}(z) = 0 \rightarrow \mathcal{I}(\neg z) = 1$ y
 por lo tanto, $\mathcal{I}(s \lor j \lor \neg z) = 1$.
 
 Con este mismo programa se puede forzar una fórmula que no tenga solución y así
 realizar el cálculo de todas las posibles combinaciones de asignaciones.
 Si se agrega  como parámetro \texttt{--no-solucion}, el programa agregará el
-siguiente conjunto $\phi_{imp}$ de cláusulas al programa:
+siguiente conjunto $\phi_{imp}$ de cláusulas al programa, definido en \Cref{tab:3sat}.
 
-\begin{table}
+\begin{table}[h]
 \[
 \small
 \centering
@@ -163,7 +163,7 @@ F & F & F & T & T & T & T
 \caption{Tabla de verdad con las fórmulas de todas las posibles combinaciones de tres variables $P$, $Q$ y $R$ en la forma normal conjuntiva \textit{(NFC)}.\label{tab:3sat}}
 \end{table}
 
-Como se puede observar en la tabla \ref{tab:3sat}, existe siempre para alguna
+Como se puede observar en la tabla \Cref{tab:3sat}, existe siempre para alguna
 combinación de valores de $P$, $Q$ y $R$, el valor de $F$ (o falso) en todas
 las columnas y filas, por lo tanto, como se ve en la tabla \ref{tab:3sat2}, se puede
 suponer que $\nexists~\mathcal{I} \mid \mathcal{I}(\phi_{imp}) = 1$.
@@ -185,7 +185,7 @@ F & F & F & F
 \end{array}
 \]
 \caption{Tabla de verdad con las conjunciones del resultado de la
-tabla \ref{tab:3sat}.} \label{tab:3sat2}
+tabla \Cref{tab:3sat}.} \label{tab:3sat2}
 \end{table}
 
 \begin{center}
@@ -232,21 +232,21 @@ y dos).}.
 
 El algoritmo dado produce la solución (si es que existe) pero el costo en tiempo
 es demasiado alto. Este algoritmo es lo que se le denomina de tiempo ``exponencial'' y
-esto se debe a que el número de asignaciones crece de la siguiente manera:
+esto se debe a que el número de asignaciones crece de la siguiente manera (\Cref{fig:satfigure}):
 
 \input{./images/arbol-3SAT-02.tex}
 
 En el 2010 se publicó un artículo donde describen un algoritmo que reduce la
 complejidad a $O(1.439^{n})$ y existe una competencia anual que premia a las
 mejores implementaciones para encontrar soluciones al problema
-\texttt{SAT}~\cite{Kutzkov2010} \cite{satcompetition}, sin embargo las
+\texttt{SAT},\cite{Kutzkov2010} \cite{satcompetition}, sin embargo las
 soluciones siguen siendo exponenciales.  Habría que mencionar que si se
 encuentra una solución en tiempo \textsl{P} se estaría demostrando que
 $\textsl{P}=\textsl{NP}$.
 
 \section{Heurísticas}
 
-Una alternativa a solucionar problemas como \texttt{3SAT} o
+Una alternativa a solucionar problemas como \texttt{3-SAT} o
 equivalentes\footnote{Que sea un problema perteneciente a la clase \textsl{NP} o
   con una cota \textit{$big-O$} que se quisiera reducir.} son estrategias y procesos
 que se utilizan fácilmente debido a la información libremente aplicada para
@@ -265,7 +265,17 @@ heurísticas normalmente no suelen ser la mejor solución, pero intentan produci
 una solución \emph{suficientemente buena}~\cite{Gigerenzer2008}.  Generalmente
 sus salidas son el resultado de ejecuciones de funciones estocásticas y
 raramente almacenan información del proceso de obtención del resultado
-previo~\cite{heuristicdefoxford}~\cite{Pearl1984}.
+previo~\cite{heuristicdefoxford},\cite{Pearl1984}.
+
+Las heurísticas son tan diversas que es difícil clasificarlas exclusivamente en sólo 
+una categoría, sin embargo existen características que comparten ciertas heurísticas:
+los métodos resolutivos llamados de \textit{búsqueda tabú} son aquellos que determinan 
+una posible respuesta, las marcan y premian la exploración de soluciones alejadas de las 
+posibles respuestas marcadas. Los algoritmos (heurísticos) genéticos están por su parte 
+inspirados en la evolución biológica, modificando poblaciones (de objetos a mejorar) y 
+premiando a las soluciones más cercanas al objetivo. Existen muchos otras heurísticas como 
+las redes neuronales o reocido simulado y si bien todas diferentes, comparten la 
+característica de producir soluciones sin garantizar necesariamente que sea la mejor.
 
 Cuando se habla de heurísticas, es importante mencionar que en algunos
 textos~\cite{Pearl1984} hablan sobre una cierta \textit{intuición} o criterio
@@ -297,7 +307,7 @@ versión generalizada del problema, de las $n$-reinas, es un problema
 Como muestra de la aplicación de una heurística, se implementó un conjunto de
 funciones que usan una función de costo, una entrada y un factor aleatorio para
 hayar soluciones al problema de las reinas. El código se puede leer
-en el~\cref{apendice:reinas}. La función de costo y funcionamiento de la
+en el~\Cref{apendice:reinas}. La función de costo y funcionamiento de la
 heurística es la que se muestra a continuación.
 
 La secuencia de ordenamiento de reinas no es aleatorio sino sistemático, de
@@ -326,14 +336,14 @@ el método de asignación:
 
 \begin{displaymath}
   \begin{array}{rcl}
-    f(C5) & = & 8 \\
-    f(E5) & = & 9 \\
-    f(C5) & = & 10.
+    f(c5) & = & 8 \\
+    f(e5) & = & 9 \\
+    f(f5) & = & 10.
   \end{array}
 \end{displaymath}
 
 La opción que la heurística tomaría en este caso sería aquella donde la reina
-es asignada a la casilla $C5$. Algunas iteraciones llegan al caso donde
+es asignada a la casilla $c5$. Algunas iteraciones llegan al caso donde
 $f(X) = f(Y)$ y aquí es donde se realiza una asignación aleatoria y se escoge
 cualquiera de las dos. Es posible que se llegue a un punto donde no se pueda
 seguir asignando más reinas, en este caso la heurística vuelve a partir de cero
@@ -349,7 +359,7 @@ Isaac Newton, las cuales contienen un método para encontrar aproximaciones de
 raíces a funciones. El método de Newton converge sólo bajo ciertas condiciones;
 sin estas condiciones el procedimiento fácilmente podría alejarse del resultado
 esperado~\cite{newton}. Para obtener soluciones \textit{buenas} dado un método,
-hay que definir lo que \textit{bueno} significa y esto consiste en un conjunto
+hay que definir lo que significa \textit{bueno} y esto consiste en un conjunto
 de condiciones y reglas que servirán para acotar algún resultado previamente
 definido.
 
@@ -494,8 +504,8 @@ esté conformada por abejas recolectoras empleadas artificiales; y la segunda
 mitad sean clasificadas como observadoras. Para cada fuente de alimento, existe
 sólo una abeja recolectora empleada; en otras palabras, el número de abejas
 empleadas es igual al número de fuentes de alimento. Las abejas que agoten su
-fuente de alimento, se convertirán en abejas exploradoras
-~\cite{karaboga2005idea}. Los pasos propuestos por el autor, son los siguientes:
+fuente de alimento, se convertirán en abejas exploradoras~\cite{karaboga2005idea}.
+ Los pasos propuestos por el autor, son los siguientes:
 
 \begin{algorithm}
   \begin{algorithmic}[1]
