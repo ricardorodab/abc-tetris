@@ -1,0 +1,219 @@
+\begin{frame}
+\frametitle{Funciones de las abejas}
+\begin{itemize}
+\item Abeja exploradora.
+\begin{itemize}
+\item \texttt{\_busca\_fuente}: Copia la mejor fuente reportada en la colmena y genera un nuevo tablero $B_{n}$ a partir de una trayectoria $\sigma_{n-1}$. $B_{n}$ es ahora su fuente asociada.
+\end{itemize}
+\pause
+
+\item Abeja trabajadora.
+\begin{itemize}
+\item \texttt{\_explotar}: Genera un $\sigma_{n}$ sobre su tablero asociado y lo aplica para obtener un tablero nuevo $B_{n+1}$.
+\end{itemize}
+\pause
+
+\item Abeja observadora.
+\begin{itemize}
+\item \texttt{\_observadoras}: 
+\begin{enumerate}
+ \item Se le asigna una fuente de alguna abeja trabajadora. Todas las abejas observadoras tienen que poseer una fuente asociada.
+ \item Corta parcialmente la ultima trayectoria $\sigma$ y la completa hasta encontrar una fuente ``cercana''.
+ \item Si la fuente cercana es \textit{mejor} a la fuente original, avisa a la colmena. 
+\end{enumerate}
+\end{itemize}
+\pause
+\item Todas las abejas.
+\begin{itemize}
+\item \texttt{\_nectar}: Función de costo o función \textit{fitness}.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Función de costo}
+\begin{itemize}
+\item ¿Cuál es el objetivo de la función de costo?
+\pause
+\begin{itemize}
+\item Primer objetivo: que la heurística elimine $n \geq 10$ filas.
+\pause
+\item Objetivo principal: eliminar $n \geq 20$ filas.
+\end{itemize}
+\pause
+\item ¿Cómo se logra orientar a la heurística hacia el objetivo? 
+\pause
+Suponer la siguiente entrada: \texttt{L = \{I, Rg, Lg, Sq, 
+I, T, Ls, Rs, I\}}.
+\begin{columns}
+\column{0.45\textwidth}
+\begin{figure}
+\scalebox{.40}{\input{./images/mal-juego.tex}}
+\end{figure}
+\pause
+\column{0.1\textwidth}
+\begin{center}
+$\Longrightarrow$
+\end{center}
+\column{0.45\textwidth}
+\begin{figure}
+\scalebox{.40}{\input{./images/medio-juego.tex}}
+\end{figure}
+\end{columns}
+
+\item ¿Cómo se sabe que una función de costo funciona acorde a los requerimientos?
+\pause
+\textcolor{red}{Experimentación}.
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Filas entre pesos negativos}
+\begin{displaymath}
+   f = \frac{1 + \texttt{filas-removidas}}{\texttt{horizontalidad} + \texttt{atrapados} + \texttt{cubiertos} + \texttt{altura}} .
+\end{displaymath}
+\pause 
+\begin{columns}
+\column{0.45\textwidth}
+\begin{figure}
+\scalebox{.40}{\input{./images/fila-negativos.tex}}
+\end{figure}
+\begin{itemize}
+\pause
+\item $\texttt{filas-removidas} = 0$
+\item $\texttt{horizontalidad} = 1$
+\item $\texttt{atrapados} = 1$
+\item $\texttt{cubiertos} = 7$
+\item $\texttt{altura} = 4$ 
+\end{itemize}
+\begin{displaymath}
+    \frac{1 + \texttt{0}}{\texttt{1} + \texttt{1} + \texttt{7} + \texttt{4}} = \frac{1}{13} \approx 0.077.
+\end{displaymath}
+\pause
+\column{0.1\textwidth}
+\begin{center}
+VS.
+\end{center}
+\column{0.45\textwidth}
+\begin{figure}
+\scalebox{.40}{\input{./images/eval-tablero.tex}}
+\end{figure}
+\begin{itemize}
+\pause
+\item $\texttt{filas-removidas} = 2$
+\item $\texttt{horizontalidad} = 1$
+\item $\texttt{atrapados} = 0$
+\item $\texttt{cubiertos} = 0$
+\item $\texttt{altura} = 4$ 
+\end{itemize}
+\begin{displaymath}
+    \frac{1 + (2 \times c)}{1 + 0 + 0 + 1} = \frac{1 + 4}{2} = \frac{5}{2} = 2.5.
+\end{displaymath}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados filas entre pesos negativos}
+En una colmena de 100 abejas, los resultados fueron los siguientes:
+\begin{figure}
+\scalebox{.7}{\input{images/filaspesosresul.tex}}
+\pause
+\begin{itemize}
+\item Se obtuvieron como mejor solución 18 filas removidas.
+\end{itemize}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{\textit{Raining skyline}}
+\begin{itemize}
+\item Optimización de casillas disponibles. ¿En qué consiste?
+\end{itemize}
+\begin{columns}
+\column{0.45\textwidth}
+\begin{figure}
+\scalebox{.40}{\input{./images/tablero-promedio.tex}}
+\end{figure}
+\pause
+\column{0.1\textwidth}
+\begin{center}
+$\Longrightarrow$
+\end{center}
+\column{0.45\textwidth}
+\begin{figure}
+\scalebox{.40}{\input{./images/cierre-convexo.tex}}
+\end{figure}
+\end{columns}
+\pause
+\vspace{10mm}
+\begin{displaymath}
+  rs = \sum_{i=1,j=1}^{ancho, alto} j \enskip | \enskip (i,j) \in C_{sup}.
+\end{displaymath} 
+\hspace{10mm}
+\begin{displaymath}
+  f(T) = \frac{n - rs}{n}.
+\end{displaymath} 
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados de \textit{Raining skyline} sin ponderar}
+\begin{figure}
+\scalebox{.7}{\input{images/rainingskyline.tex}}
+\end{figure}
+\pause
+\begin{itemize}
+\item ¿Por qué los resultados no son los esperados?
+\item ¿Por qué puede decrecer el número de filas eliminadas en una ``mejor'' semilla?
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ponderación de \textit{Raining skyline}}
+\begin{itemize}
+\item[1]
+\end{itemize}
+\begin{displaymath}
+  rs = \sum_{i=1,j=1}^{ancho, alto} j \enskip | \enskip j > b \enskip \land \enskip (i,b) \in C_{sup} 
+  \end{displaymath} 
+
+  \begin{displaymath}
+    f(T) = \frac{rs}{\sum\limits_{i=1}^{alto} (ancho \times i)}.
+\end{displaymath} 
+\pause
+\begin{itemize}
+\item[2]
+\end{itemize}
+ \begin{displaymath}
+    f(T) = \left(\frac{rs}{\sum\limits_{i=1}^{alto} (ancho \times i)}\right) \times (1 + fe).
+\end{displaymath} 
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados de \textit{Raining skyline} ponderada}
+En una colmena de 100 abejas, los resultados fueron los siguientes:
+\begin{figure}
+\scalebox{.85}{\input{images/rainingskylinetres.tex}}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Observaciones adicionales}
+\begin{itemize}
+\pause
+\item Tamaño de la colmena se mantuvo en 100 abejas.
+\pause
+\item Cada función fue probada con al menos 10,000 semillas pseudoaleatorias. 
+\pause
+\item Se consiguieron muestras de números mayores al objetivo (71 filas eliminadas).
+\pause 
+\item Los resultados de ambas funciones arrojan muestras muy similares.
+\begin{figure}
+\scalebox{.5}{\input{images/dosfunciones.tex}}
+\end{figure}
+\end{itemize}
+\end{frame}

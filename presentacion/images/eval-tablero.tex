@@ -1,0 +1,15 @@
+% 4 es Sq
+% 1 es I
+% 2 es L(Lg) inversa y 6 es L(Rg)
+% 3 es S(Rs) y Z es 7(Ls)
+% 5 es T 
+% 1, 1, 4, 4, 4, 4
+% I, I, Sq, Sq, Sq, Sq
+\begin{tikzpicture}[omino/nodes/.style={shape=rectangle, rounded corners, inner sep=+0pt, minimum size=1cm-2\pgflinewidth}]
+	\path [omino={at={9,2}, rotate=180}][tetris=2];
+	\path [omino={at={2,0}, rotate=0}][tetris=4];
+	\path [omino={at={7,0}, rotate=90}][tetris=1];
+	\path [omino={at={8,1}, rotate=90}][tetris=1];	
+	\path [omino={at={0	,0}, rotate=0}][tetris=4];
+	\path [omino={at={3,2}, rotate=-90}][tetris=5];
+\end{tikzpicture}

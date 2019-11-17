@@ -255,9 +255,9 @@ son criterios, métodos o principios para decidir cuál de los varios cursos de
 acción alternativos promete ser el más eficaz para lograr algún objetivo. Estos
 procesos reciben el nombre de \textbf{heurísticas}~\cite{Pearl1984}.
 
-A diferencia de los algoritmos\footnote{En algunos textos
-  como~\cite{DeInformatica2010} se le llaman a las heurísticas
-  \textit{algoritmos heurísticos}.} informalmente definidos previamente, las
+A diferencia de los algoritmos\footnote{En algunos textos, 
+como~\cite{DeInformatica2010} las heurísticas son llamadas 
+\textit{algoritmos heurísticos}.} informalmente definidos previamente, las
 heurísticas también son una secuencia de pasos bien definida pero dada una
 entrada $I$, produce una salida $o \in \texttt{OUTPUT}$ con $\texttt{OUTPUT}$ un
 conjunto de posibles valores de solución.  Las respuestas dadas por las
@@ -297,9 +297,12 @@ dos reinas no pueden estar colocadas en la misma columna, fila o diagonal.
 \input{./images/tablero-ajedrez-01.tex}
 
 Poco después del planteamiento (1848), este problema fue resuelto y aparecieron
-un total de 40 soluciones entre los años 1849 y 1854 en la revista de ajedrez
-alemana \textit{Deutsche Schachzeitung}~\cite{Campbell1977}.  El problema de las
-8 reinas es, desde un punto de vista computacional, interesante de usar como 
+un total de 40 formas de encontras las distintas soluciones entre los años 1849 y 
+1854 en la revista de ajedrez alemana \textit{Deutsche Schachzeitung}~\cite{Campbell1977}. 
+El problema tiene 92 distintas soluciones de las cuales si se eliminan las no 
+obtenibles por giros o simetrías (es decir, eliminando las soluciones isomorfas)
+quedan 12 soluciones diferentes. El problema de las 8 reinas es, desde un punto de 
+vista computacional, interesante de usar como 
 ejemplo de un problema que es resuelto por una heurística, debido a que la 
 versión generalizada del problema, de las $n$-reinas, es un problema 
 \textsl{NP}-completo~\cite{Gent2017}.

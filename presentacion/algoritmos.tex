@@ -1,0 +1,58 @@
+\begin{frame}
+\frametitle{Tipo de soluciones}
+
+Algoritmo:
+\begin{block}{Definición (usada en este trabajo)}
+ Un algoritmo es cualquier procedimiento bien
+definido que toma algún valor, o conjunto de valores como entrada
+(o \textbf{Input}) y produce algún valor, o conjunto de valores como
+salida (u \textbf{Output}). Un algoritmo siempre termina.
+\end{block}
+
+\pause
+
+Ejemplos: 
+
+\begin{itemize}
+\item Suma de los primeros $n \in \mathbb{N}$ ($O(n)$).
+\item Mergesort ($O(n\log(n))$).
+\item Algoritmo de Dijkstra ($O(|E| + |V|\log(|V|))$).
+\end{itemize}
+
+\pause
+
+\begin{itemize}
+		\item[$\blacksquare$] Ventaja: Garantía de resultado.
+		\item[$\blacksquare$] Desventaja: Tiempo poco realista en problemas $\notin$ \textsl{P}.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Algoritmos fuera de la clase \textsl{P}}
+
+\begin{block}{3-SAT}
+Dado un conjunto de fórmulas
+$\phi = \{x_{1}, x_{2}, x_{3}, ..., x_{n}\}$ con cada $x_{i}$ una fórmula lógica
+de la forma $x_{i} = p_{i} \lor q_{i} \lor r_{i} $, con $ p_{i}, q_{i}, r_{i}$,
+variables o términos lógicos, se deberá encontrar una
+interpretación $\mathcal{I}$ tal que $\mathcal{I}(\phi) = \mathcal{I}(x_{i}) = 1$
+$\forall i \in \{1,2,...,n\}$.
+\end{block}
+\pause
+¿Qué pasa si aplicamos un algoritmo para encontrar la solución de un problema como \texttt{3-SAT} $\in$ \textsl{NP}-completo?
+
+\begin{columns}
+\column{0.5\textwidth}
+\begin{figure}[h]
+\scalebox{.4}{\input{images/satfigure.tex}}
+\end{figure} 
+
+\column{0.5\textwidth}
+\begin{figure}
+\scalebox{.4}{\input{./images/arbol-3SAT-02.tex}}
+\end{figure}
+
+\end{columns}
+\end{frame}

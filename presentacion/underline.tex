@@ -1,0 +1,32 @@
+\usepackage{scalerel,stackengine}
+\def\buthickness{1pt}
+\def\budefaultcolor{black}
+\makeatletter
+\newcommand\bunderline[1][\budefaultcolor]{\def\bucolor{#1}\bunderlineaux}
+\newcommand\bunderlineaux[2][\buthickness]{%
+  \ThisStyle{%
+  \ifmmode%
+    \setbox0=\hbox{\m@th$\SavedStyle#2$}
+    \stackunder[2pt]{\copy0}{\textcolor{\bucolor}{\rule{\wd0}{#1}}}%
+  \else%
+    \xdef\butmpthickness{#1}%
+    \prebunderlinewords#2 \endarg%
+  \fi%
+}}
+\def\prebunderlinewords#1 #2\endarg{%
+  \ifx\endarg#2\endarg\def\wdaugment{0pt}\else\def\wdaugment{.8ex}\fi%
+  \bunderlinewords#1 #2\endarg%
+}
+\def\bunderlinewords#1 #2\endarg{%
+    \setbox0=\hbox{#1\strut}%
+    \stackengine{0pt}{\copy0}{\textcolor{\bucolor}{%
+      \smash{\rule{\dimexpr\wd0+\wdaugment\relax}{\butmpthickness}}}}{U}{c}{F}{T}{S}% 
+    \ifx\endarg#2\endarg\def\next{}\else\ \def\next{\bunderlinewords#2\endarg}\fi\next%
+}
+\newcommand\buonslide[1][black]{\def\butmpcolor{#1}\buonslideauxA}
+\newcommand\buonslideauxA[1][\buthickness]{\def\butmpthickness{#1}\buonslideauxB}
+\def\buonslideauxB<#1>#2{\onslide<#1>{%
+  \rlap{\bunderline[\butmpcolor][\butmpthickness]{\phantom{#2}}}}#2}
+\makeatother
+\useinnertheme{default}
+\beamertemplatenavigationsymbolsempty

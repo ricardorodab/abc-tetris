@@ -1,0 +1,113 @@
+\begin{frame}
+\frametitle{Diseño de la implementación}
+\begin{itemize}
+\pause
+\item Análisis del sistema.
+\pause
+\begin{itemize}
+\item Mantener modelo apegado a la formalización del juego.
+\item Desarrollar la heurística descrita por Dervis Karaboga.
+\item Comunicación de la heurística con el juego de Tetris.
+\pause
+\begin{figure}
+\hbox{\hspace{4.5em} \scalebox{.55}{\input{./images/estructura-proyecto.tex}}}
+\end{figure}
+\end{itemize}
+\end{itemize}
+\pause
+\begin{center}
+Orientación a Objetos
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Diseño de clases}
+\pause
+\LARGE
+Tetris:
+\normalsize
+
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+\item Punto.
+\item Tipo.
+\item Casilla.
+\end{itemize}
+
+\column{0.5\textwidth}
+\begin{itemize}
+\item Pieza.
+\item Tablero.
+\item Tetris.
+\end{itemize}
+\end{columns}
+\pause
+
+\vspace{10mm}
+
+\LARGE
+ABC:
+\normalsize
+\pause
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+\item Tipo\_Abeja.
+\item Colmena.
+\end{itemize}
+
+\column{0.5\textwidth}
+\begin{itemize}
+\item Abeja:
+\pause
+\begin{itemize}
+\item Exploradoras.
+\item Trabajadoras.
+\item \textcolor<6->{red}{Observadoras.}
+\end{itemize}
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Abejas observadoras}
+\begin{itemize}
+\item ¿Qué hacen exactamente las abejas observadoras en ABC? 
+\begin{itemize}
+\pause
+\item Seleccionan una fuente $i$: 
+\begin{displaymath}
+  P_{i} = \frac{F(\theta_{i})}{\sum_{k=1}^{n} F(\theta_{k})}.
+\end{displaymath}
+\pause
+\item Buscan una fuente vecina a $i$:
+\begin{displaymath}
+  \theta_{i}(c+1) = \theta_{i}(c) \pm \phi_{i}(c).
+\end{displaymath}
+\end{itemize}
+\pause
+\item ¿Cómo se proyecta una fuente en Tetris?
+\pause
+R= Para un juego $\langle B_{0}, P_{1}, ..., P_{p} \rangle$, una secuencia de
+trayectorias $\Sigma$ es una secuencia $B_{0},\sigma_{1},B_{1},...,\sigma_{p},B_{p}$
+tal que para cada $i$, la trayectoria de la pieza $P_{i}$ aplicado al tablero
+$B_{i-1}$, genera el tablero $B_{i}$.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Abejas observadoras}
+\begin{itemize}
+\item ¿Cómo se \textit{mueven} las abejas \textit{cerca} de una fuente?
+\end{itemize}
+\begin{figure}
+\scalebox{.55}{\input{./images/lista-movimientos.tex}}
+\end{figure}
+\end{frame}

@@ -1,0 +1,127 @@
+\definecolor{rojo}{RGB}{255,0,0}
+\definecolor{verde}{RGB}{0,255,0}
+\definecolor{azul}{RGB}{0,0,255}
+\definecolor{naranja}{RGB}{255,69,0}
+\definecolor{dorado}{RGB}{255,125,0}
+\definecolor{morado}{RGB}{128,0,128}
+\definecolor{acian}{RGB}{0,255,255}
+\definecolor{misol}{RGB}{255,255,0}
+\definecolor{minegro}{RGB}{0,0,0}
+\definecolor{mimorado}{RGB}{241,101,244}
+\usetikzlibrary{matrix}
+\makeatletter
+\newcounter{qrr@tikz@omino}
+\newcounter{qrr@tikz@omino@up}
+\newcounter{qrr@tikz@omino@right}
+\tikzset{
+    omino/.style={/tikz/omino/.cd,#1},
+    omino/distance/.initial=1,
+    omino/radius/.initial=.5,
+    omino/at/.style={/tikz/shift={(#1)}},
+    omino/rotate/.style={/tikz/rotate=#1},
+    omino/s/.code=
+        \setcounter{qrr@tikz@omino}{0}%
+        \setcounter{qrr@tikz@omino@up}{0}%
+        \setcounter{qrr@tikz@omino@right}{0}%
+        \pgfkeysalso{/tikz/insert path={(0,0) node[/tikz/omino/nodes/.try,/tikz/omino/node normal/.try,/tikz/omino/node start/.try] {\qrr@tikz@omino@text@start}}},
+    omino/u/.code=%
+        \stepcounter{qrr@tikz@omino}%
+        \stepcounter{qrr@tikz@omino@up}%
+        \pgfkeysalso{/tikz/insert path={
+            to[/tikz/omino/how] ++(up:#1)
+            node[/tikz/omino/nodes/.try,/tikz/omino/node normal/.try,/tikz/omino/node up/.try]{\qrr@tikz@omino@text@up}}},
+    omino/d/.code=%
+        \stepcounter{qrr@tikz@omino}%
+        \addtocounter{qrr@tikz@omino@up}{-1}%
+        \pgfkeysalso{/tikz/insert path={
+            to[/tikz/omino/how] ++(down:#1)
+            node[/tikz/omino/nodes/.try,/tikz/omino/node normal/.try,/tikz/omino/node down/.try]{\qrr@tikz@omino@text@down}}},
+    omino/l/.code=%
+        \stepcounter{qrr@tikz@omino}%
+        \addtocounter{qrr@tikz@omino@right}{-1}%
+        \pgfkeysalso{/tikz/insert path={
+            to[/tikz/omino/how] ++(left:#1)
+            node[/tikz/omino/nodes/.try,/tikz/omino/node normal/.try,/tikz/omino/node left/.try]{\qrr@tikz@omino@text@left}}},
+    omino/r/.code=%
+        \stepcounter{qrr@tikz@omino}%
+        \stepcounter{qrr@tikz@omino@right}%
+        \pgfkeysalso{/tikz/insert path={
+            to[/tikz/omino/how] ++(right:#1)
+            node[/tikz/omino/nodes/.try,/tikz/omino/node normal/.try,/tikz/omino/node right/.try] {\qrr@tikz@omino@text@right}}},
+    omino/u/.default=\pgfkeysvalueof{/tikz/omino/distance},
+    omino/d/.default=\pgfkeysvalueof{/tikz/omino/distance},
+    omino/l/.default=\pgfkeysvalueof{/tikz/omino/distance},
+    omino/r/.default=\pgfkeysvalueof{/tikz/omino/distance},
+    omino/how/.style=,
+    omino/reset/.code=
+        \pgfutil@in@_{#1}%
+        \ifpgfutil@in@
+            \qrr@tikz@omino@split#1\relax
+        \else
+            \edef\pgf@tempa{\csname qrr@tikz@omino@coords@#1\endcsname}%
+            \expandafter\qrr@tikz@omino@split\pgf@tempa\relax
+        \fi
+        \pgfkeysalso{/tikz/insert path={(omino-n-#1.center) node[/tikz/omino/nodes/.try, /tikz/omino/node reset/.try] {\qrr@tikz@omino@text@reset}}},
+    omino/do/.code={\@tfor\@next:=#1\do{\pgfkeysalso{/tikz/omino/\@next}}},
+    omino/node reset/.style={draw=none,fill=none},
+    omino/node normal/.style={
+        name=omino-n-\number\c@qrr@tikz@omino,
+        alias=omino-n-\number\c@qrr@tikz@omino@right_\number\c@qrr@tikz@omino@up,
+        omino/@store coords
+    },
+    omino/@store coords/.code=
+        \expandafter\xdef\csname qrr@tikz@omino@coords@\arabic{qrr@tikz@omino}\endcsname
+        {\number\c@qrr@tikz@omino@right_\number\c@qrr@tikz@omino@up},
+    omino/Text/.code 2 args=\expandafter\edef\csname qrr@tikz@omino@text@#1\endcsname{#2},
+    omino/Text={up}{},omino/Text={down}{},omino/Text={left}{},omino/Text={right}{},omino/Text={start}{},omino/Text={reset}{}
+}
+\def\qrr@tikz@omino@split#1_#2\relax{\setcounter{qrr@tikz@omino@right}{#1}\setcounter{qrr@tikz@omino@up}{#2}}
+
+\tikzset{
+    omino/x mirror/.style={/tikz/cm={-1,0,0,1,(0,0)}},
+    omino/y mirror/.style={/tikz/cm={1,0,0,-1,(0,0)}}
+}
+
+\tikzset{fun/.code={\pgfmathtruncatemacro\@fun{\number\c@qrr@tikz@omino/4*100}\pgfkeysalso{fill=blue!\@fun!red}}}
+\makeatother
+\tikzset{
+    tetris/.style={/tikz/tetris/.cd,#1},
+    tetris/1/.style={/tikz/omino={do=suuu}},
+    tetris/2/.style={/tikz/omino={do=suur}},
+    tetris/6/.style={/tikz/omino={do=suul}},
+    tetris/3/.style={/tikz/omino={do=suru}},
+    tetris/7/.style={/tikz/omino={do=sulu}},
+    tetris/4/.style={/tikz/omino={do=surd}},
+    tetris/8/.style={/tikz/omino={do=s}},
+    tetris/9/.style={/tikz/omino={do=s}},
+    tetris/0/.style={/tikz/omino={do=s}},
+    tetris/5/.style={/tikz/omino={s,u,u,reset=1,r}}
+}
+\makeatletter
+
+\makeatother
+\newcommand*{\thesamepictureeverywhere}{\matrix[column sep=.5cm, row sep=.5cm, ampersand replacement=\&] {
+\path [tetris=1];  \&
+\path [tetris=6]; \& 
+\path [tetris=2]; \&
+\path [tetris=3];  \& 
+\path [tetris=7]; \&
+\path [tetris=4];  \&
+\path [tetris=8]; \&
+\path [tetris=9];  \&
+\path [tetris=0];  \&
+\path [tetris=5];\\};}
+
+\tikzset{
+    tetris/1/.prefix style={/tikz/omino/nodes/.append style={fill=rojo,text=white}},
+    tetris/2/.prefix style={/tikz/omino/nodes/.append style={fill=azul}},
+    tetris/6/.prefix style={/tikz/omino/nodes/.append style={fill=acian}},
+    tetris/3/.prefix style={/tikz/omino/nodes/.append style={fill=verde}},
+    tetris/7/.prefix style={/tikz/omino/nodes/.append style={fill=dorado}},
+    tetris/4/.prefix style={/tikz/omino/nodes/.append style={fill=naranja}},
+    tetris/8/.prefix style={/tikz/omino/nodes/.append style={fill=misol}},
+    tetris/9/.prefix style={/tikz/omino/nodes/.append style={fill=mimorado}},
+    tetris/0/.prefix style={/tikz/omino/nodes/.append style={fill=minegro}},
+    tetris/5/.prefix style={/tikz/omino/nodes/.append style={fill=morado}},
+    omino/Text={start}{.}
+}

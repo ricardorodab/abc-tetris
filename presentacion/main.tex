@@ -1,0 +1,85 @@
+\documentclass{beamer}
+\usetheme{Boadilla}
+\usepackage[utf8]{inputenc}
+\usepackage[fixlanguage]{babelbib}
+\usepackage[spanish,mexico]{babel}
+\usepackage{color,soul}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{tikz-uml}
+\usetikzlibrary{arrows.meta,
+                matrix,
+                positioning,
+                automata, 
+                decorations.pathreplacing
+                }
+\usepackage{skak}
+\usepackage{tikz}
+\usepackage{advdate}
+\usetikzlibrary{shapes.arrows}
+\tikzset{
+    myarrow/.style={
+        draw,
+        fill=orange,
+        single arrow,
+        minimum height=3.5ex,
+        single arrow head extend=1ex
+    }
+}
+\newcommand{\arrowup}{%
+\tikz [baseline=-0.5ex]{\node [myarrow,rotate=90] {};}
+}
+\newcommand{\arrowdown}{%
+\tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
+}
+\input{./images/tetrominos.tex}
+%% Algoritmo siempre termina 
+% en la 6, Alfgoritmo siempre termina y la definicion esta en ingles. 
+% Grarantia de resultados lleva punto.
+% no. 
+% en heuristica la condicion de terminacion es mas ambigua.
+
+
+\setul{0.5ex}{0.3ex}
+\setulcolor{blue}
+\input{./underline.tex}
+
+\title[ABC implementado en Tetris]{Una implementación de la heurística Colonia de Abejas
+Artificiales a una instancia del problema de la 3-Partición: 
+Tetris}
+\author{José Ricardo Rodríguez Abreu}
+\institute[UNAM]{Universidad Nacional Autónoma de México}
+\date{\AdvanceDate[+1]\today}
+
+\begin{document}
+ 
+\begin{frame}
+\titlepage
+\end{frame}
+
+\input{./introduccion.tex}
+
+\input{./tetris.tex}
+
+\input{./clasificacion.tex}
+
+\input{./algoritmos.tex}
+
+\input{./heuristicas.tex}
+
+\input{./abc.tex}
+
+\input{./nptetris.tex}
+
+\input{./tecnologias.tex}
+
+\input{./implementacion.tex}
+
+\input{./funcioncosto.tex}
+
+\input{./experimentacion.tex}
+
+\input{./conclusiones.tex}
+
+\end{document}
